@@ -28,3 +28,11 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules (ZILENCE)
+
+- Roles live in `public.user_roles` (`coach` | `player`); RLS uses `is_coach()` / `my_player_id()` security-definer helpers. Why: UI hiding is not security; every table must enforce role and visibility in RLS.
+- The first account becomes coach via the `handle_new_user` trigger; players join through `invitePlayer` (server fn, service role used only after the caller's coach check). Why: no self-promotion path exists from the browser.
+- Shared content carries a `visibility_level` (`private` default, `player`, `team`); coach notes never get one. Why: sharing is managed centrally in Visibility Control.
+- All UI text goes through `src/i18n` (`pt` is the source dictionary, `es` must mirror every key; a test enforces it). Why: per-user language saved on `profiles.language`.
+- Few main areas: coach routes under `src/routes/_authenticated/_coach/`, player routes under `_player/`, each gated by a role check in its pathless layout. Sub-features go in tabs, dialogs and sheets, not new routes. Why: the spec forbids one page per feature.

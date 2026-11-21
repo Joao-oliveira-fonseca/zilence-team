@@ -1,16 +1,16 @@
 # ZILENCE Roadmap
 
-## Etapa 1 — Foundation (em andamento)
-- [ ] Design system preto/laranja + logo + favicon
-- [ ] Login (e-mail/senha, Google, Lovable), definir senha via convite, reset de senha
-- [ ] Papéis Coach/Player + RLS
-- [ ] Convite de jogadores por e-mail (coach envia, jogador define senha)
-- [ ] Navegação Coach (7 áreas) e Player (4 áreas)
-- [ ] Coach Overview e Player Dashboard com dados reais
-- [ ] i18n pt-BR (padrão) + es, preferência salva por usuário
+## Etapa 1 — Foundation (concluída)
+- [x] Design system preto/laranja + logo + favicon
+- [x] Login (e-mail/senha, Google, Lovable), definir senha via convite, reset de senha
+- [x] Papéis Coach/Player + RLS
+- [x] Convite de jogadores por e-mail (coach envia, jogador define senha)
+- [x] Navegação Coach (7 áreas) e Player (4 áreas)
+- [x] Coach Overview e Player Dashboard com dados reais
+- [x] i18n pt-BR (padrão) + es, preferência salva por usuário
 
 ## Etapa 2 — Player Management
-- [ ] Cadastro/edição/exclusão de jogadores, busca e filtros
+- [x] Cadastro/edição/exclusão de jogadores, busca e filtros
 - [ ] Perfil do jogador (Overview, Performance, Champions, History)
 - [ ] Avaliações (5 categorias, estrelas, Overall Rating)
 - [ ] Champion Pool com Data Dragon
