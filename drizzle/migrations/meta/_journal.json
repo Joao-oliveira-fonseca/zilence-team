@@ -22,6 +22,13 @@
       "when": 1795295115305,
       "tag": "0002_evaluations_champion_pool",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795301265012,
+      "tag": "0003_add_team_operations",
+      "breakpoints": true
     }
   ]
 }

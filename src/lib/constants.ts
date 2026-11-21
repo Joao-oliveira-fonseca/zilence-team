@@ -10,6 +10,7 @@ export type TaskPriority = Enums["task_priority"];
 export const POSITIONS: Position[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
 export const PLAYER_STATUSES: PlayerStatus[] = ["active", "substitute", "trial", "inactive"];
 export const TASK_STATUSES: TaskStatus[] = ["pending", "in_progress", "completed", "overdue"];
+export const EDITABLE_TASK_STATUSES: TaskStatus[] = ["pending", "in_progress", "completed"];
 
 export const ELO_TIERS = [
   "Iron",

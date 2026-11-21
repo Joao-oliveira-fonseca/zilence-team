@@ -24,12 +24,60 @@ export const upcomingEventsQueryOptions = queryOptions({
   },
 });
 
+export const calendarEventsQueryOptions = queryOptions({
+  queryKey: ["calendar-events"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("calendar_events")
+      .select("id, title, event_type, description, starts_at, ends_at, timezone, location, external_link, related_player_id, participant_ids, visibility, created_by, created_at, updated_at, scrim_session_id")
+      .order("starts_at", { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const eventPrivateNotesQueryOptions = queryOptions({
+  queryKey: ["event-private-notes"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("calendar_event_private_notes").select("*");
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const scrimSessionsQueryOptions = queryOptions({
+  queryKey: ["scrim-sessions"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("scrim_sessions").select("*").order("starts_at", { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const scrimGamesQueryOptions = queryOptions({
+  queryKey: ["scrim-games"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("scrim_games").select("*").order("game_number");
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const scrimPrivateNotesQueryOptions = queryOptions({
+  queryKey: ["scrim-private-notes"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("scrim_private_notes").select("*");
+    if (error) throw error;
+    return data;
+  },
+});
+
 export const tasksQueryOptions = queryOptions({
   queryKey: ["tasks"],
   queryFn: async () => {
     const { data, error } = await supabase
       .from("team_tasks")
-      .select("id, title, status, priority, due_at, player_id, category")
+      .select("*")
       .order("due_at", { ascending: true, nullsFirst: false });
     if (error) throw error;
     return data;

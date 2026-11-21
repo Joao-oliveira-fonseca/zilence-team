@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      calendar_event_private_notes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_id: string
+          notes: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          notes?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          notes?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_event_private_notes_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "calendar_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar_events: {
         Row: {
           coach_notes: string | null
@@ -25,7 +57,9 @@ export type Database = {
           external_link: string | null
           id: string
           location: string | null
+          participant_ids: string[]
           related_player_id: string | null
+          scrim_session_id: string | null
           starts_at: string
           timezone: string
           title: string
@@ -42,7 +76,9 @@ export type Database = {
           external_link?: string | null
           id?: string
           location?: string | null
+          participant_ids?: string[]
           related_player_id?: string | null
+          scrim_session_id?: string | null
           starts_at: string
           timezone?: string
           title: string
@@ -59,7 +95,9 @@ export type Database = {
           external_link?: string | null
           id?: string
           location?: string | null
+          participant_ids?: string[]
           related_player_id?: string | null
+          scrim_session_id?: string | null
           starts_at?: string
           timezone?: string
           title?: string
@@ -72,6 +110,13 @@ export type Database = {
             columns: ["related_player_id"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_scrim_session_id_fkey"
+            columns: ["scrim_session_id"]
+            isOneToOne: true
+            referencedRelation: "scrim_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -279,6 +324,142 @@ export type Database = {
         }
         Relationships: []
       }
+      scrim_games: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          duration_minutes: number | null
+          game_number: number
+          id: string
+          improvements: string | null
+          observations: string | null
+          opponent_composition: string[]
+          participant_ids: string[]
+          positives: string | null
+          result: Database["public"]["Enums"]["scrim_result"] | null
+          session_id: string
+          updated_at: string
+          zilence_composition: string[]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          duration_minutes?: number | null
+          game_number: number
+          id?: string
+          improvements?: string | null
+          observations?: string | null
+          opponent_composition?: string[]
+          participant_ids?: string[]
+          positives?: string | null
+          result?: Database["public"]["Enums"]["scrim_result"] | null
+          session_id: string
+          updated_at?: string
+          zilence_composition?: string[]
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          duration_minutes?: number | null
+          game_number?: number
+          id?: string
+          improvements?: string | null
+          observations?: string | null
+          opponent_composition?: string[]
+          participant_ids?: string[]
+          positives?: string | null
+          result?: Database["public"]["Enums"]["scrim_result"] | null
+          session_id?: string
+          updated_at?: string
+          zilence_composition?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scrim_games_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "scrim_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scrim_private_notes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          notes: string
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          notes?: string
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          notes?: string
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scrim_private_notes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "scrim_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scrim_sessions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          duration_minutes: number
+          id: string
+          opponent: string
+          participant_ids: string[]
+          planned_games: number
+          scrim_type: Database["public"]["Enums"]["scrim_type"]
+          starts_at: string
+          timezone: string
+          updated_at: string
+          visibility: Database["public"]["Enums"]["visibility_level"]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          duration_minutes?: number
+          id?: string
+          opponent: string
+          participant_ids?: string[]
+          planned_games?: number
+          scrim_type?: Database["public"]["Enums"]["scrim_type"]
+          starts_at: string
+          timezone?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          duration_minutes?: number
+          id?: string
+          opponent?: string
+          participant_ids?: string[]
+          planned_games?: number
+          scrim_type?: Database["public"]["Enums"]["scrim_type"]
+          starts_at?: string
+          timezone?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Relationships: []
+      }
       team_settings: {
         Row: {
           about: string | null
@@ -388,6 +569,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_read_scrim_session: {
+        Args: { _session_id: string }
+        Returns: boolean
+      }
       has_any_coach: { Args: never; Returns: boolean }
       has_role: {
         Args: {
@@ -428,6 +613,13 @@ export type Database = {
         | "other"
       lol_position: "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT"
       player_status: "active" | "substitute" | "trial" | "inactive"
+      scrim_result: "WIN" | "LOSS"
+      scrim_type:
+        | "BO3"
+        | "BO5"
+        | "SOLO_GAME"
+        | "TEAM_PRACTICE"
+        | "DRAFT_PRACTICE"
       task_category:
         | "individual_training"
         | "champion_study"
@@ -578,6 +770,14 @@ export const Constants = {
       ],
       lol_position: ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"],
       player_status: ["active", "substitute", "trial", "inactive"],
+      scrim_result: ["WIN", "LOSS"],
+      scrim_type: [
+        "BO3",
+        "BO5",
+        "SOLO_GAME",
+        "TEAM_PRACTICE",
+        "DRAFT_PRACTICE",
+      ],
       task_category: [
         "individual_training",
         "champion_study",
