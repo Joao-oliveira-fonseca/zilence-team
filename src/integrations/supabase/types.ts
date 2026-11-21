@@ -76,6 +76,124 @@ export type Database = {
           },
         ]
       }
+      champion_pool: {
+        Row: {
+          champion_id: string
+          champion_name: string
+          comment: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          mastery_notes: string | null
+          player_id: string
+          position: Database["public"]["Enums"]["lol_position"]
+          rating: number
+          updated_at: string
+          visibility: Database["public"]["Enums"]["visibility_level"]
+        }
+        Insert: {
+          champion_id: string
+          champion_name: string
+          comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          mastery_notes?: string | null
+          player_id: string
+          position: Database["public"]["Enums"]["lol_position"]
+          rating?: number
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Update: {
+          champion_id?: string
+          champion_name?: string
+          comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          mastery_notes?: string | null
+          player_id?: string
+          position?: Database["public"]["Enums"]["lol_position"]
+          rating?: number
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "champion_pool_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      player_evaluations: {
+        Row: {
+          coach_id: string | null
+          coach_name: string | null
+          comments: Json
+          created_at: string
+          evaluated_at: string
+          id: string
+          knowledge_avg: number | null
+          macro_avg: number | null
+          mental_avg: number | null
+          micro_avg: number | null
+          overall: number | null
+          player_id: string
+          scores: Json
+          teamplay_avg: number | null
+          updated_at: string
+          visibility: Database["public"]["Enums"]["visibility_level"]
+        }
+        Insert: {
+          coach_id?: string | null
+          coach_name?: string | null
+          comments?: Json
+          created_at?: string
+          evaluated_at?: string
+          id?: string
+          knowledge_avg?: number | null
+          macro_avg?: number | null
+          mental_avg?: number | null
+          micro_avg?: number | null
+          overall?: number | null
+          player_id: string
+          scores?: Json
+          teamplay_avg?: number | null
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Update: {
+          coach_id?: string | null
+          coach_name?: string | null
+          comments?: Json
+          created_at?: string
+          evaluated_at?: string
+          id?: string
+          knowledge_avg?: number | null
+          macro_avg?: number | null
+          mental_avg?: number | null
+          micro_avg?: number | null
+          overall?: number | null
+          player_id?: string
+          scores?: Json
+          teamplay_avg?: number | null
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_evaluations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       players: {
         Row: {
           avatar_url: string | null

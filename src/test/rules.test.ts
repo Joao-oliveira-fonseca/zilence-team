@@ -32,3 +32,19 @@ describe("ZILENCE rules", () => {
     expect(eloTier(null)).toBeNull();
   });
 });
+
+import { categoryAverage, championPoolRating, overallRating } from "@/lib/evaluation";
+
+describe("Evaluation math", () => {
+  it("averages a category from its starred criteria only", () => {
+    expect(categoryAverage({ "macro.vision": 4, "macro.waves": 5 }, "macro")).toBe(4.5);
+  });
+  it("Overall Rating is the mean of the five category averages", () => {
+    const scores = { "macro.vision": 5, "micro.mechanics": 4, "teamplay.sync": 4, "knowledge.matchups": 4, "mental.discipline": 4 };
+    expect(overallRating(scores)).toBe(4.2);
+  });
+  it("Champion Pool Rating is separate from Overall", () => {
+    expect(championPoolRating([5, 4, 3])).toBe(4);
+    expect(championPoolRating([])).toBeNull();
+  });
+});

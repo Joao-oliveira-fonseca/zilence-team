@@ -15,6 +15,13 @@
       "when": 1795293646621,
       "tag": "0001_coach_bootstrap_check",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795295115305,
+      "tag": "0002_evaluations_champion_pool",
+      "breakpoints": true
     }
   ]
 }

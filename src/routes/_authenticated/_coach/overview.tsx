@@ -4,9 +4,10 @@ import { CalendarDays, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState, PageHeader, PlayerAvatar, PositionBadge, Section, StatCard } from "@/components/common/Page";
-import { pendingAccountsQueryOptions, playersQueryOptions, tasksQueryOptions, upcomingEventsQueryOptions } from "@/lib/queries";
+import { recentEvaluationsQueryOptions, pendingAccountsQueryOptions, playersQueryOptions, tasksQueryOptions, upcomingEventsQueryOptions } from "@/lib/queries";
 import { POSITIONS, TASK_STATUSES, effectiveTaskStatus } from "@/lib/constants";
 import { useI18n } from "@/i18n";
+import { formatRating } from "@/lib/evaluation";
 
 export const Route = createFileRoute("/_authenticated/_coach/overview")({
   head: () => ({ meta: [{ title: "Overview — ZILENCE" }, { name: "description", content: "Visão geral da equipe ZILENCE." }] }),
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/_authenticated/_coach/overview")({
       context.queryClient.ensureQueryData(upcomingEventsQueryOptions),
       context.queryClient.ensureQueryData(tasksQueryOptions),
       context.queryClient.ensureQueryData(pendingAccountsQueryOptions),
+      context.queryClient.ensureQueryData(recentEvaluationsQueryOptions),
     ]),
   component: Overview,
 });
@@ -27,6 +29,12 @@ function Overview() {
   const { data: tasks } = useSuspenseQuery(tasksQueryOptions);
   const { data: pending } = useSuspenseQuery(pendingAccountsQueryOptions);
 
+  const { data: evals } = useSuspenseQuery(recentEvaluationsQueryOptions);
+  // Team average = mean of each player's latest Overall Rating.
+  const latestByPlayer = new Map<string, number>();
+  for (const e of evals) if (e.overall !== null && !latestByPlayer.has(e.player_id)) latestByPlayer.set(e.player_id, Number(e.overall));
+  const teamAvg = latestByPlayer.size ? [...latestByPlayer.values()].reduce((a, b) => a + b, 0) / latestByPlayer.size : null;
+  const nick = (id: string) => players.find((p) => p.id === id)?.nickname ?? "—";
   const active = players.filter((p) => p.status === "active");
   const taskCounts = TASK_STATUSES.map((status) => ({
     status,
@@ -52,9 +60,9 @@ function Overview() {
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label={t("overview.kpiPlayers")} value={players.length} hint={`${active.length} ${t("overview.kpiActive").toLowerCase()}`} accent />
-        <StatCard label={t("overview.kpiEvents")} value={events.length} />
+        <StatCard label={t("overview.kpiEvents")} value={events.length} hint={`${pending.length} ${t("overview.kpiPendingAccounts").toLowerCase()}`} />
         <StatCard label={t("overview.kpiTasks")} value={openTasks} />
-        <StatCard label={t("overview.kpiPendingAccounts")} value={pending.length} />
+        <StatCard label={t("overview.kpiAverage")} value={formatRating(teamAvg)} hint={t("eval.count", { n: evals.length })} />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -136,7 +144,25 @@ function Overview() {
           )}
         </Section>
 
-        <Section title={t("overview.taskOverview")} className="lg:col-span-3">
+        <Section title={t("overview.recentEvals")}>
+          {evals.length === 0 ? (
+            <EmptyState text={t("eval.none")} />
+          ) : (
+            <ul className="space-y-2">
+              {evals.slice(0, 6).map((e) => (
+                <li key={e.id}>
+                  <Link to="/players" search={{ player: e.player_id }} className="flex items-center gap-3 hover:text-primary">
+                    <span className="w-10 font-display text-xl font-bold text-primary tabular">{formatRating(e.overall)}</span>
+                    <span className="flex-1 truncate text-sm font-medium">{nick(e.player_id)}</span>
+                    <span className="text-xs text-muted-foreground">{new Date(e.evaluated_at).toLocaleDateString(locale)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Section>
+
+        <Section title={t("overview.taskOverview")} className="lg:col-span-2">
           {tasks.length === 0 ? (
             <EmptyState text={t("overview.noTasks")} />
           ) : (

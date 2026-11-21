@@ -44,3 +44,45 @@ export const pendingAccountsQueryOptions = queryOptions({
     return data ?? [];
   },
 });
+
+export const evaluationsQueryOptions = (playerId: string) =>
+  queryOptions({
+    queryKey: ["evaluations", playerId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("player_evaluations")
+        .select("*")
+        .eq("player_id", playerId)
+        .order("evaluated_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+export const championPoolQueryOptions = (playerId: string) =>
+  queryOptions({
+    queryKey: ["champion-pool", playerId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("champion_pool")
+        .select("*")
+        .eq("player_id", playerId)
+        .order("rating", { ascending: false })
+        .order("champion_name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+export const recentEvaluationsQueryOptions = queryOptions({
+  queryKey: ["evaluations", "recent"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("player_evaluations")
+      .select("id, player_id, overall, evaluated_at, coach_name")
+      .order("evaluated_at", { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    return data;
+  },
+});

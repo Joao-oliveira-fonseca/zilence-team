@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { CalendarDays, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState, PageHeader, PlayerAvatar, PositionBadge, Section } from "@/components/common/Page";
 import { memberQueryOptions } from "@/lib/member";
-import { tasksQueryOptions, upcomingEventsQueryOptions } from "@/lib/queries";
+import { evaluationsQueryOptions, tasksQueryOptions, upcomingEventsQueryOptions } from "@/lib/queries";
+import { formatRating } from "@/lib/evaluation";
 import { effectiveTaskStatus } from "@/lib/constants";
 import { useI18n } from "@/i18n";
 
@@ -24,6 +25,8 @@ function PlayerDashboard() {
   const { data: events } = useSuspenseQuery(upcomingEventsQueryOptions);
   const { data: tasks } = useSuspenseQuery(tasksQueryOptions);
   const player = member?.player;
+  const { data: evals = [] } = useQuery({ ...evaluationsQueryOptions(player?.id ?? ""), enabled: Boolean(player) });
+  const latest = evals[0];
   const openTasks = tasks.filter((task) => effectiveTaskStatus(task) !== "completed");
   const fmt = new Intl.DateTimeFormat(locale, { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
   const dateFmt = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" });
@@ -53,11 +56,11 @@ function PlayerDashboard() {
           <div className="mt-6 grid grid-cols-2 gap-3">
             <div className="rounded-md border border-border bg-surface p-3">
               <p className="eyebrow">{t("player.overall")}</p>
-              <p className="mt-1 font-display text-4xl font-bold text-primary tabular">—</p>
+              <p className="mt-1 font-display text-4xl font-bold text-primary tabular">{formatRating(latest?.overall)}</p>
             </div>
             <div className="rounded-md border border-border bg-surface p-3">
               <p className="eyebrow">{t("player.lastEvaluation")}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{t("player.noEvaluation")}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{latest ? new Date(latest.evaluated_at).toLocaleDateString(locale) : t("player.noEvaluation")}</p>
             </div>
           </div>
         </section>

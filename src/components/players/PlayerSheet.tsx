@@ -2,7 +2,9 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PlayerAvatar, PositionBadge, StageNotice } from "@/components/common/Page";
+import { PlayerAvatar, PositionBadge } from "@/components/common/Page";
+import { HistoryTab, PerformanceTab } from "@/components/performance/PerformanceViews";
+import { ChampionPoolTab } from "@/components/performance/ChampionPool";
 import type { Player } from "@/lib/member";
 import { useI18n } from "@/i18n";
 
@@ -10,7 +12,7 @@ export function PlayerSheet({ player, onOpenChange, onEdit }: { player: Player |
   const { t, locale } = useI18n();
   return (
     <Sheet open={Boolean(player)} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+      <SheetContent className="w-full overflow-y-auto sm:max-w-2xl">
         {player && (
           <>
             <SheetHeader className="text-left">
@@ -59,13 +61,13 @@ export function PlayerSheet({ player, onOpenChange, onEdit }: { player: Player |
                 <Button variant="secondary" onClick={() => onEdit(player)}>{t("common.edit")}</Button>
               </TabsContent>
               <TabsContent value="performance" className="mt-4">
-                <StageNotice stage={2} description="stage.performance" />
+                <PerformanceTab player={player} editable />
               </TabsContent>
               <TabsContent value="champions" className="mt-4">
-                <StageNotice stage={2} description="stage.champions" />
+                <ChampionPoolTab player={player} editable />
               </TabsContent>
               <TabsContent value="history" className="mt-4">
-                <StageNotice stage={2} description="stage.history" />
+                <HistoryTab player={player} editable />
               </TabsContent>
             </Tabs>
           </>
