@@ -59,8 +59,14 @@ function ResetPasswordPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (password.length < 8) return toast.error(t("auth.passwordShort"));
-    if (password !== confirm) return toast.error(t("auth.passwordMismatch"));
+    if (password.length < 8) {
+      toast.error(t("auth.passwordShort"));
+      return;
+    }
+    if (password !== confirm) {
+      toast.error(t("auth.passwordMismatch"));
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password });
     setBusy(false);

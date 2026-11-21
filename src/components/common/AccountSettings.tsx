@@ -57,7 +57,7 @@ export function AccountSettings() {
         </form>
       </Section>
       <Section title={t("common.language")}>
-        <LanguageSwitch userId={member?.userId} />
+        <LanguageSwitch userId={member?.userId ?? null} />
         <p className="mt-3 text-sm text-muted-foreground">{t("settings.languageHint")}</p>
       </Section>
     </div>
