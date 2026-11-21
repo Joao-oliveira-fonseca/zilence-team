@@ -1,3 +1,4 @@
+import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { es } from "./es";
 import { pt, type TranslationKey } from "./pt";
@@ -29,7 +30,16 @@ type I18nValue = {
   locale: string;
 };
 
-const I18nContext = createContext<I18nValue | null>(null);
+// Kept on globalThis so hot reloads of this file reuse the same context as the mounted provider.
+const g = globalThis as { __zilenceI18n?: React.Context<I18nValue | null> };
+const I18nContext = (g.__zilenceI18n ??= createContext<I18nValue | null>(null));
+
+const fallback: I18nValue = {
+  lang: "pt",
+  setLang: () => {},
+  t: (key, vars) => translate("pt", key, vars),
+  locale: "pt-BR",
+};
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   // Portuguese is the default; the device preference is read after hydration.
@@ -64,8 +74,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
 export function useI18n() {
   const ctx = useContext(I18nContext);
-  if (!ctx) throw new Error("useI18n must be used inside I18nProvider");
-  return ctx;
+  // Outside the provider (e.g. mid hot-reload) fall back to Portuguese instead of crashing.
+  return ctx ?? fallback;
 }
 
 export type { TranslationKey };
