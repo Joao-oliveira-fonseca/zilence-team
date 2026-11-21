@@ -10,33 +10,239 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedCoachRouteRouteImport } from './routes/_authenticated/_coach/route'
+import { Route as AuthenticatedPlayerRouteRouteImport } from './routes/_authenticated/_player/route'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedCoachAnalysisRouteImport } from './routes/_authenticated/_coach/analysis'
+import { Route as AuthenticatedCoachOperationsRouteImport } from './routes/_authenticated/_coach/operations'
+import { Route as AuthenticatedCoachOverviewRouteImport } from './routes/_authenticated/_coach/overview'
+import { Route as AuthenticatedCoachPlayersRouteImport } from './routes/_authenticated/_coach/players'
+import { Route as AuthenticatedCoachSettingsRouteImport } from './routes/_authenticated/_coach/settings'
+import { Route as AuthenticatedCoachTeamRouteImport } from './routes/_authenticated/_coach/team'
+import { Route as AuthenticatedCoachVisibilityRouteImport } from './routes/_authenticated/_coach/visibility'
+import { Route as AuthenticatedPlayerDashboardRouteImport } from './routes/_authenticated/_player/dashboard'
+import { Route as AuthenticatedPlayerHubRouteImport } from './routes/_authenticated/_player/hub'
+import { Route as AuthenticatedPlayerPerformanceRouteImport } from './routes/_authenticated/_player/performance'
+import { Route as AuthenticatedPlayerProfileRouteImport } from './routes/_authenticated/_player/profile'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedCoachRouteRoute = AuthenticatedCoachRouteRouteImport.update({
+  id: '/_coach',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPlayerRouteRoute =
+  AuthenticatedPlayerRouteRouteImport.update({
+    id: '/_player',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCoachAnalysisRoute =
+  AuthenticatedCoachAnalysisRouteImport.update({
+    id: '/analysis',
+    path: '/analysis',
+    getParentRoute: () => AuthenticatedCoachRouteRoute,
+  } as any)
+const AuthenticatedCoachOperationsRoute =
+  AuthenticatedCoachOperationsRouteImport.update({
+    id: '/operations',
+    path: '/operations',
+    getParentRoute: () => AuthenticatedCoachRouteRoute,
+  } as any)
+const AuthenticatedCoachOverviewRoute =
+  AuthenticatedCoachOverviewRouteImport.update({
+    id: '/overview',
+    path: '/overview',
+    getParentRoute: () => AuthenticatedCoachRouteRoute,
+  } as any)
+const AuthenticatedCoachPlayersRoute =
+  AuthenticatedCoachPlayersRouteImport.update({
+    id: '/players',
+    path: '/players',
+    getParentRoute: () => AuthenticatedCoachRouteRoute,
+  } as any)
+const AuthenticatedCoachSettingsRoute =
+  AuthenticatedCoachSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedCoachRouteRoute,
+  } as any)
+const AuthenticatedCoachTeamRoute = AuthenticatedCoachTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AuthenticatedCoachRouteRoute,
+} as any)
+const AuthenticatedCoachVisibilityRoute =
+  AuthenticatedCoachVisibilityRouteImport.update({
+    id: '/visibility',
+    path: '/visibility',
+    getParentRoute: () => AuthenticatedCoachRouteRoute,
+  } as any)
+const AuthenticatedPlayerDashboardRoute =
+  AuthenticatedPlayerDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedPlayerRouteRoute,
+  } as any)
+const AuthenticatedPlayerHubRoute = AuthenticatedPlayerHubRouteImport.update({
+  id: '/hub',
+  path: '/hub',
+  getParentRoute: () => AuthenticatedPlayerRouteRoute,
+} as any)
+const AuthenticatedPlayerPerformanceRoute =
+  AuthenticatedPlayerPerformanceRouteImport.update({
+    id: '/performance',
+    path: '/performance',
+    getParentRoute: () => AuthenticatedPlayerRouteRoute,
+  } as any)
+const AuthenticatedPlayerProfileRoute =
+  AuthenticatedPlayerProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedPlayerRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/analysis': typeof AuthenticatedCoachAnalysisRoute
+  '/operations': typeof AuthenticatedCoachOperationsRoute
+  '/overview': typeof AuthenticatedCoachOverviewRoute
+  '/players': typeof AuthenticatedCoachPlayersRoute
+  '/settings': typeof AuthenticatedCoachSettingsRoute
+  '/team': typeof AuthenticatedCoachTeamRoute
+  '/visibility': typeof AuthenticatedCoachVisibilityRoute
+  '/dashboard': typeof AuthenticatedPlayerDashboardRoute
+  '/hub': typeof AuthenticatedPlayerHubRoute
+  '/performance': typeof AuthenticatedPlayerPerformanceRoute
+  '/profile': typeof AuthenticatedPlayerProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/analysis': typeof AuthenticatedCoachAnalysisRoute
+  '/operations': typeof AuthenticatedCoachOperationsRoute
+  '/overview': typeof AuthenticatedCoachOverviewRoute
+  '/players': typeof AuthenticatedCoachPlayersRoute
+  '/settings': typeof AuthenticatedCoachSettingsRoute
+  '/team': typeof AuthenticatedCoachTeamRoute
+  '/visibility': typeof AuthenticatedCoachVisibilityRoute
+  '/dashboard': typeof AuthenticatedPlayerDashboardRoute
+  '/hub': typeof AuthenticatedPlayerHubRoute
+  '/performance': typeof AuthenticatedPlayerPerformanceRoute
+  '/profile': typeof AuthenticatedPlayerProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/_coach': typeof AuthenticatedCoachRouteRouteWithChildren
+  '/_authenticated/_player': typeof AuthenticatedPlayerRouteRouteWithChildren
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/_coach/analysis': typeof AuthenticatedCoachAnalysisRoute
+  '/_authenticated/_coach/operations': typeof AuthenticatedCoachOperationsRoute
+  '/_authenticated/_coach/overview': typeof AuthenticatedCoachOverviewRoute
+  '/_authenticated/_coach/players': typeof AuthenticatedCoachPlayersRoute
+  '/_authenticated/_coach/settings': typeof AuthenticatedCoachSettingsRoute
+  '/_authenticated/_coach/team': typeof AuthenticatedCoachTeamRoute
+  '/_authenticated/_coach/visibility': typeof AuthenticatedCoachVisibilityRoute
+  '/_authenticated/_player/dashboard': typeof AuthenticatedPlayerDashboardRoute
+  '/_authenticated/_player/hub': typeof AuthenticatedPlayerHubRoute
+  '/_authenticated/_player/performance': typeof AuthenticatedPlayerPerformanceRoute
+  '/_authenticated/_player/profile': typeof AuthenticatedPlayerProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/home'
+    | '/analysis'
+    | '/operations'
+    | '/overview'
+    | '/players'
+    | '/settings'
+    | '/team'
+    | '/visibility'
+    | '/dashboard'
+    | '/hub'
+    | '/performance'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/home'
+    | '/analysis'
+    | '/operations'
+    | '/overview'
+    | '/players'
+    | '/settings'
+    | '/team'
+    | '/visibility'
+    | '/dashboard'
+    | '/hub'
+    | '/performance'
+    | '/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/reset-password'
+    | '/_authenticated/_coach'
+    | '/_authenticated/_player'
+    | '/_authenticated/home'
+    | '/_authenticated/_coach/analysis'
+    | '/_authenticated/_coach/operations'
+    | '/_authenticated/_coach/overview'
+    | '/_authenticated/_coach/players'
+    | '/_authenticated/_coach/settings'
+    | '/_authenticated/_coach/team'
+    | '/_authenticated/_coach/visibility'
+    | '/_authenticated/_player/dashboard'
+    | '/_authenticated/_player/hub'
+    | '/_authenticated/_player/performance'
+    | '/_authenticated/_player/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +254,194 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/_coach': {
+      id: '/_authenticated/_coach'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedCoachRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/_player': {
+      id: '/_authenticated/_player'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedPlayerRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/_coach/analysis': {
+      id: '/_authenticated/_coach/analysis'
+      path: '/analysis'
+      fullPath: '/analysis'
+      preLoaderRoute: typeof AuthenticatedCoachAnalysisRouteImport
+      parentRoute: typeof AuthenticatedCoachRouteRoute
+    }
+    '/_authenticated/_coach/operations': {
+      id: '/_authenticated/_coach/operations'
+      path: '/operations'
+      fullPath: '/operations'
+      preLoaderRoute: typeof AuthenticatedCoachOperationsRouteImport
+      parentRoute: typeof AuthenticatedCoachRouteRoute
+    }
+    '/_authenticated/_coach/overview': {
+      id: '/_authenticated/_coach/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof AuthenticatedCoachOverviewRouteImport
+      parentRoute: typeof AuthenticatedCoachRouteRoute
+    }
+    '/_authenticated/_coach/players': {
+      id: '/_authenticated/_coach/players'
+      path: '/players'
+      fullPath: '/players'
+      preLoaderRoute: typeof AuthenticatedCoachPlayersRouteImport
+      parentRoute: typeof AuthenticatedCoachRouteRoute
+    }
+    '/_authenticated/_coach/settings': {
+      id: '/_authenticated/_coach/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedCoachSettingsRouteImport
+      parentRoute: typeof AuthenticatedCoachRouteRoute
+    }
+    '/_authenticated/_coach/team': {
+      id: '/_authenticated/_coach/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof AuthenticatedCoachTeamRouteImport
+      parentRoute: typeof AuthenticatedCoachRouteRoute
+    }
+    '/_authenticated/_coach/visibility': {
+      id: '/_authenticated/_coach/visibility'
+      path: '/visibility'
+      fullPath: '/visibility'
+      preLoaderRoute: typeof AuthenticatedCoachVisibilityRouteImport
+      parentRoute: typeof AuthenticatedCoachRouteRoute
+    }
+    '/_authenticated/_player/dashboard': {
+      id: '/_authenticated/_player/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedPlayerDashboardRouteImport
+      parentRoute: typeof AuthenticatedPlayerRouteRoute
+    }
+    '/_authenticated/_player/hub': {
+      id: '/_authenticated/_player/hub'
+      path: '/hub'
+      fullPath: '/hub'
+      preLoaderRoute: typeof AuthenticatedPlayerHubRouteImport
+      parentRoute: typeof AuthenticatedPlayerRouteRoute
+    }
+    '/_authenticated/_player/performance': {
+      id: '/_authenticated/_player/performance'
+      path: '/performance'
+      fullPath: '/performance'
+      preLoaderRoute: typeof AuthenticatedPlayerPerformanceRouteImport
+      parentRoute: typeof AuthenticatedPlayerRouteRoute
+    }
+    '/_authenticated/_player/profile': {
+      id: '/_authenticated/_player/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedPlayerProfileRouteImport
+      parentRoute: typeof AuthenticatedPlayerRouteRoute
+    }
   }
 }
 
+interface AuthenticatedCoachRouteRouteChildren {
+  AuthenticatedCoachAnalysisRoute: typeof AuthenticatedCoachAnalysisRoute
+  AuthenticatedCoachOperationsRoute: typeof AuthenticatedCoachOperationsRoute
+  AuthenticatedCoachOverviewRoute: typeof AuthenticatedCoachOverviewRoute
+  AuthenticatedCoachPlayersRoute: typeof AuthenticatedCoachPlayersRoute
+  AuthenticatedCoachSettingsRoute: typeof AuthenticatedCoachSettingsRoute
+  AuthenticatedCoachTeamRoute: typeof AuthenticatedCoachTeamRoute
+  AuthenticatedCoachVisibilityRoute: typeof AuthenticatedCoachVisibilityRoute
+}
+
+const AuthenticatedCoachRouteRouteChildren: AuthenticatedCoachRouteRouteChildren =
+  {
+    AuthenticatedCoachAnalysisRoute: AuthenticatedCoachAnalysisRoute,
+    AuthenticatedCoachOperationsRoute: AuthenticatedCoachOperationsRoute,
+    AuthenticatedCoachOverviewRoute: AuthenticatedCoachOverviewRoute,
+    AuthenticatedCoachPlayersRoute: AuthenticatedCoachPlayersRoute,
+    AuthenticatedCoachSettingsRoute: AuthenticatedCoachSettingsRoute,
+    AuthenticatedCoachTeamRoute: AuthenticatedCoachTeamRoute,
+    AuthenticatedCoachVisibilityRoute: AuthenticatedCoachVisibilityRoute,
+  }
+
+const AuthenticatedCoachRouteRouteWithChildren =
+  AuthenticatedCoachRouteRoute._addFileChildren(
+    AuthenticatedCoachRouteRouteChildren,
+  )
+
+interface AuthenticatedPlayerRouteRouteChildren {
+  AuthenticatedPlayerDashboardRoute: typeof AuthenticatedPlayerDashboardRoute
+  AuthenticatedPlayerHubRoute: typeof AuthenticatedPlayerHubRoute
+  AuthenticatedPlayerPerformanceRoute: typeof AuthenticatedPlayerPerformanceRoute
+  AuthenticatedPlayerProfileRoute: typeof AuthenticatedPlayerProfileRoute
+}
+
+const AuthenticatedPlayerRouteRouteChildren: AuthenticatedPlayerRouteRouteChildren =
+  {
+    AuthenticatedPlayerDashboardRoute: AuthenticatedPlayerDashboardRoute,
+    AuthenticatedPlayerHubRoute: AuthenticatedPlayerHubRoute,
+    AuthenticatedPlayerPerformanceRoute: AuthenticatedPlayerPerformanceRoute,
+    AuthenticatedPlayerProfileRoute: AuthenticatedPlayerProfileRoute,
+  }
+
+const AuthenticatedPlayerRouteRouteWithChildren =
+  AuthenticatedPlayerRouteRoute._addFileChildren(
+    AuthenticatedPlayerRouteRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCoachRouteRoute: typeof AuthenticatedCoachRouteRouteWithChildren
+  AuthenticatedPlayerRouteRoute: typeof AuthenticatedPlayerRouteRouteWithChildren
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCoachRouteRoute: AuthenticatedCoachRouteRouteWithChildren,
+  AuthenticatedPlayerRouteRoute: AuthenticatedPlayerRouteRouteWithChildren,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
