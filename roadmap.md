@@ -18,6 +18,9 @@
 ## Etapa 3 — Team Operations
 - [ ] Competitive Calendar, Scrim Management, Team Tasks
 
+## Ajuste solicitado
+- [ ] Seleção de campeões por posição: TOP, JUNGLE, MID, ADC e SUPPORT
+
 ## Etapa 4 — Analysis & Privacy
 - [ ] Coach Notes, VOD Review, Draft Analysis
 - [x] Visibility Control (avaliações, Champion Pool, tarefas, eventos)

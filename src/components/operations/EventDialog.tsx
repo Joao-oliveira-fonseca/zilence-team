@@ -40,7 +40,7 @@ function initialForm(event: CalendarEvent | null | undefined) {
   };
 }
 
-export function EventDialog({ open, onOpenChange, event, players, notes }: { open: boolean; onOpenChange: (open: boolean) => void; event?: CalendarEvent | null; players: Player[]; notes?: string }) {
+export function EventDialog({ open, onOpenChange, event, players, notes }: { open: boolean; onOpenChange: (open: boolean) => void; event?: CalendarEvent | null; players: Player[]; notes?: string | undefined }) {
   const { t } = useI18n();
   const qc = useQueryClient();
   const { data: member } = useSuspenseQuery(memberQueryOptions);

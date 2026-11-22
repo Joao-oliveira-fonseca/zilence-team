@@ -108,7 +108,7 @@ function ChampionDialog({ player, entry, open, onOpenChange }: { player: Player;
         </DialogHeader>
         {!entry && (
           <div className="space-y-3">
-            <p className="eyebrow">{t("champ.catalog")}</p>
+            <div><p className="eyebrow">{t("champ.catalog")}</p><p className="mt-1 text-xs text-muted-foreground">{t("champ.roleHint")}</p></div>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -122,6 +122,7 @@ function ChampionDialog({ player, entry, open, onOpenChange }: { player: Player;
               <p className="py-6 text-center text-sm text-destructive">{t("champ.loadError")}</p>
             ) : (
               <div className="grid max-h-64 grid-cols-5 gap-2 overflow-y-auto pr-1 sm:grid-cols-8">
+                {list.length === 0 && <p className="col-span-full py-6 text-center text-sm text-muted-foreground">{t("champ.noChampions")}</p>}
                 {list.map((c) => (
                   <button
                     key={c.id}
@@ -152,7 +153,7 @@ function ChampionDialog({ player, entry, open, onOpenChange }: { player: Player;
             <div className="space-y-1.5">
               <Label>{t("champ.position")}</Label>
               <div className="flex flex-wrap gap-1">
-                {POSITIONS.map((p) => (
+                {POSITIONS.filter((p) => entry || catalog.data?.champions.find((c) => c.id === champ.id)?.positions.includes(p)).map((p) => (
                   <button key={p} type="button" onClick={() => setPosition(p)} className={cn("rounded px-2.5 py-1 font-display text-xs font-semibold tracking-wider", position === p ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground")}>
                     {p}
                   </button>

@@ -33,6 +33,26 @@ describe("ZILENCE rules", () => {
   });
 });
 
+import { scrimStats, zonedDateTimeToIso } from "@/lib/operations";
+import { positionsFromMeraki } from "@/lib/champions";
+
+describe("Team operations rules", () => {
+  it("converts the configured São Paulo wall time to UTC", () => {
+    expect(zonedDateTimeToIso("2026-11-21", "18:00", "America/Sao_Paulo")).toBe("2026-11-21T21:00:00.000Z");
+  });
+
+  it("calculates scrim Win Rate from recorded wins and losses", () => {
+    const stats = scrimStats([{ id: "s1", opponent: "LOUD" }], [{ result: "WIN" }, { result: "WIN" }, { result: "LOSS" }, { result: null }]);
+    expect(stats.wins).toBe(2);
+    expect(stats.losses).toBe(1);
+    expect(stats.winRate).toBeCloseTo(66.67, 2);
+  });
+
+  it("maps all five catalog roles, including MIDDLE and BOTTOM", () => {
+    expect(positionsFromMeraki(["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "SUPPORT"])).toEqual(["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"]);
+  });
+});
+
 import { categoryAverage, championPoolRating, overallRating } from "@/lib/evaluation";
 
 describe("Evaluation math", () => {
