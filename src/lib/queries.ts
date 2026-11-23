@@ -122,6 +122,42 @@ export const championPoolQueryOptions = (playerId: string) =>
     },
   });
 
+export const coachNotesQueryOptions = queryOptions({
+  queryKey: ["coach-notes"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("coach_notes").select("*").order("pinned", { ascending: false }).order("updated_at", { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const vodReviewsQueryOptions = queryOptions({
+  queryKey: ["vod-reviews"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("vod_reviews").select("*").order("review_date", { ascending: false }).order("created_at", { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const vodTimestampsQueryOptions = queryOptions({
+  queryKey: ["vod-timestamps"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("vod_timestamps").select("*").order("seconds");
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const draftAnalysesQueryOptions = queryOptions({
+  queryKey: ["draft-analyses"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("draft_analyses").select("*").order("analysis_date", { ascending: false }).order("created_at", { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+});
+
 export const recentEvaluationsQueryOptions = queryOptions({
   queryKey: ["evaluations", "recent"],
   queryFn: async () => {

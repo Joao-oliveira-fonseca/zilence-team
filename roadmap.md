@@ -25,5 +25,9 @@
 - [ ] Coach Notes, VOD Review, Draft Analysis
 - [x] Visibility Control (avaliações, Champion Pool, tarefas, eventos, scrims)
 
+## Ajuste solicitado — Drafts de scrims
+- [ ] Registrar picks e bans de cada partida de scrim
+- [ ] Histórico de escolhas filtrável por função e campeão
+
 ## Etapa 5 — Finalization
 - [ ] Histórico/gráficos, notificações, Team Management, responsividade, testes de segurança

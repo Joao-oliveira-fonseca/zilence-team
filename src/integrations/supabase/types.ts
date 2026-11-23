@@ -174,6 +174,121 @@ export type Database = {
           },
         ]
       }
+      coach_notes: {
+        Row: {
+          author_name: string
+          category: Database["public"]["Enums"]["coach_note_category"]
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          pinned: boolean
+          player_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string
+          category?: Database["public"]["Enums"]["coach_note_category"]
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          pinned?: boolean
+          player_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          category?: Database["public"]["Enums"]["coach_note_category"]
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          pinned?: boolean
+          player_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_notes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      draft_analyses: {
+        Row: {
+          analysis_date: string
+          coach_name: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          matchups: string | null
+          opponent: string | null
+          opponent_composition: string[]
+          player_id: string | null
+          positives: string | null
+          problems: string | null
+          strategy: string | null
+          team_composition: string[]
+          title: string
+          updated_at: string
+          visibility: Database["public"]["Enums"]["visibility_level"]
+          win_conditions: string | null
+        }
+        Insert: {
+          analysis_date?: string
+          coach_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          matchups?: string | null
+          opponent?: string | null
+          opponent_composition?: string[]
+          player_id?: string | null
+          positives?: string | null
+          problems?: string | null
+          strategy?: string | null
+          team_composition?: string[]
+          title: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+          win_conditions?: string | null
+        }
+        Update: {
+          analysis_date?: string
+          coach_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          matchups?: string | null
+          opponent?: string | null
+          opponent_composition?: string[]
+          player_id?: string | null
+          positives?: string | null
+          problems?: string | null
+          strategy?: string | null
+          team_composition?: string[]
+          title?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+          win_conditions?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "draft_analyses_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_evaluations: {
         Row: {
           coach_id: string | null
@@ -326,6 +441,7 @@ export type Database = {
       }
       scrim_games: {
         Row: {
+          bans: Json
           created_at: string
           created_by: string | null
           duration_minutes: number | null
@@ -335,6 +451,7 @@ export type Database = {
           observations: string | null
           opponent_composition: string[]
           participant_ids: string[]
+          picks: Json
           positives: string | null
           result: Database["public"]["Enums"]["scrim_result"] | null
           session_id: string
@@ -342,6 +459,7 @@ export type Database = {
           zilence_composition: string[]
         }
         Insert: {
+          bans?: Json
           created_at?: string
           created_by?: string | null
           duration_minutes?: number | null
@@ -351,6 +469,7 @@ export type Database = {
           observations?: string | null
           opponent_composition?: string[]
           participant_ids?: string[]
+          picks?: Json
           positives?: string | null
           result?: Database["public"]["Enums"]["scrim_result"] | null
           session_id: string
@@ -358,6 +477,7 @@ export type Database = {
           zilence_composition?: string[]
         }
         Update: {
+          bans?: Json
           created_at?: string
           created_by?: string | null
           duration_minutes?: number | null
@@ -367,6 +487,7 @@ export type Database = {
           observations?: string | null
           opponent_composition?: string[]
           participant_ids?: string[]
+          picks?: Json
           positives?: string | null
           result?: Database["public"]["Enums"]["scrim_result"] | null
           session_id?: string
@@ -564,6 +685,119 @@ export type Database = {
         }
         Relationships: []
       }
+      vod_reviews: {
+        Row: {
+          category: Database["public"]["Enums"]["vod_category"]
+          coach_name: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          match_label: string | null
+          opponent: string | null
+          player_id: string | null
+          review_date: string
+          title: string
+          updated_at: string
+          video_url: string
+          visibility: Database["public"]["Enums"]["visibility_level"]
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["vod_category"]
+          coach_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          match_label?: string | null
+          opponent?: string | null
+          player_id?: string | null
+          review_date?: string
+          title: string
+          updated_at?: string
+          video_url: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["vod_category"]
+          coach_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          match_label?: string | null
+          opponent?: string | null
+          player_id?: string | null
+          review_date?: string
+          title?: string
+          updated_at?: string
+          video_url?: string
+          visibility?: Database["public"]["Enums"]["visibility_level"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vod_reviews_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vod_timestamps: {
+        Row: {
+          category: Database["public"]["Enums"]["vod_category"]
+          comment: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          player_id: string | null
+          review_id: string
+          seconds: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["vod_category"]
+          comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          player_id?: string | null
+          review_id: string
+          seconds: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["vod_category"]
+          comment?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          player_id?: string | null
+          review_id?: string
+          seconds?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vod_timestamps_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vod_timestamps_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "vod_reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -573,6 +807,7 @@ export type Database = {
         Args: { _session_id: string }
         Returns: boolean
       }
+      can_read_vod_review: { Args: { _review_id: string }; Returns: boolean }
       has_any_coach: { Args: never; Returns: boolean }
       has_role: {
         Args: {
@@ -603,6 +838,14 @@ export type Database = {
     }
     Enums: {
       app_role: "coach" | "player"
+      coach_note_category:
+        | "player_notes"
+        | "individual_performance"
+        | "scrim_analysis"
+        | "draft_analysis"
+        | "team_strategy"
+        | "mental_behavior"
+        | "general_notes"
       event_type:
         | "championship"
         | "official_match"
@@ -631,6 +874,15 @@ export type Database = {
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "pending" | "in_progress" | "completed" | "overdue"
       visibility_level: "private" | "player" | "team"
+      vod_category:
+        | "macro"
+        | "micro"
+        | "teamfight"
+        | "positioning"
+        | "draft"
+        | "objectives"
+        | "communication"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -759,6 +1011,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["coach", "player"],
+      coach_note_category: [
+        "player_notes",
+        "individual_performance",
+        "scrim_analysis",
+        "draft_analysis",
+        "team_strategy",
+        "mental_behavior",
+        "general_notes",
+      ],
       event_type: [
         "championship",
         "official_match",
@@ -790,6 +1051,16 @@ export const Constants = {
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["pending", "in_progress", "completed", "overdue"],
       visibility_level: ["private", "player", "team"],
+      vod_category: [
+        "macro",
+        "micro",
+        "teamfight",
+        "positioning",
+        "draft",
+        "objectives",
+        "communication",
+        "other",
+      ],
     },
   },
 } as const

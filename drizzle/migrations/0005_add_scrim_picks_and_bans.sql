@@ -1,0 +1,2 @@
+ALTER TABLE public.scrim_games ADD COLUMN picks jsonb NOT NULL DEFAULT '[]'::jsonb CHECK (jsonb_typeof(picks) = 'array');
+ALTER TABLE public.scrim_games ADD COLUMN bans jsonb NOT NULL DEFAULT '[]'::jsonb CHECK (jsonb_typeof(bans) = 'array');
