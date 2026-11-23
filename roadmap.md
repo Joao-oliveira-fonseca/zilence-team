@@ -15,15 +15,15 @@
 - [x] Avaliações (5 categorias, estrelas, Overall Rating)
 - [x] Champion Pool com Data Dragon
 
-## Etapa 3 — Team Operations
-- [ ] Competitive Calendar, Scrim Management, Team Tasks
+## Etapa 3 — Team Operations (concluída)
+- [x] Competitive Calendar, Scrim Management, Team Tasks
 
-## Ajuste solicitado
-- [ ] Seleção de campeões por posição: TOP, JUNGLE, MID, ADC e SUPPORT
+## Ajuste solicitado (concluído)
+- [x] Todos os campeões de LoL disponíveis em cada posição: TOP, JUNGLE, MID, ADC e SUPPORT
 
 ## Etapa 4 — Analysis & Privacy
 - [ ] Coach Notes, VOD Review, Draft Analysis
-- [x] Visibility Control (avaliações, Champion Pool, tarefas, eventos)
+- [x] Visibility Control (avaliações, Champion Pool, tarefas, eventos, scrims)
 
 ## Etapa 5 — Finalization
 - [ ] Histórico/gráficos, notificações, Team Management, responsividade, testes de segurança
