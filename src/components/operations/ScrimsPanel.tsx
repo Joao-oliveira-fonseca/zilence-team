@@ -14,6 +14,8 @@ import { formatZonedDate, scrimEvolution, scrimStats, sessionRecord, type ScrimG
 import { useI18n } from "@/i18n";
 import { ScrimDialog } from "./ScrimDialog";
 import { ScrimGameDialog } from "./ScrimGameDialog";
+import { GameDraftView } from "./GameDraftView";
+import { parseDraftPicks } from "@/lib/draft";
 
 export function ScrimsPanel({ canEdit }: { canEdit: boolean }) {
   const { t, locale } = useI18n();
@@ -134,7 +136,8 @@ export function ScrimsPanel({ canEdit }: { canEdit: boolean }) {
                         {game.duration_minutes && <span className="text-xs text-muted-foreground">{game.duration_minutes} {t("ops.minutes")}</span>}
                         {canEdit && <><Button variant="ghost" size="icon" aria-label={t("common.edit")} onClick={() => setGameEditing({ game, number: game.game_number })}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={t("common.delete")} onClick={() => setDeleteGame(game)}><Trash2 /></Button></>}
                       </div>
-                      {(game.zilence_composition.length > 0 || game.opponent_composition.length > 0) && <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2"><p><span className="eyebrow">ZILENCE</span><br /><span className="text-muted-foreground">{game.zilence_composition.join(" · ") || "—"}</span></p><p><span className="eyebrow">{selected.opponent}</span><br /><span className="text-muted-foreground">{game.opponent_composition.join(" · ") || "—"}</span></p></div>}
+                      <GameDraftView game={game} opponent={selected.opponent} />
+                      {parseDraftPicks(game.picks).length === 0 && (game.zilence_composition.length > 0 || game.opponent_composition.length > 0) && <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2"><p><span className="eyebrow">ZILENCE</span><br /><span className="text-muted-foreground">{game.zilence_composition.join(" · ") || "—"}</span></p><p><span className="eyebrow">{selected.opponent}</span><br /><span className="text-muted-foreground">{game.opponent_composition.join(" · ") || "—"}</span></p></div>}
                       {game.positives && <p className="mt-3 text-xs"><span className="font-medium text-success">{t("ops.positives")}: </span><span className="whitespace-pre-wrap text-muted-foreground">{game.positives}</span></p>}
                       {game.improvements && <p className="mt-2 text-xs"><span className="font-medium text-primary">{t("ops.improvements")}: </span><span className="whitespace-pre-wrap text-muted-foreground">{game.improvements}</span></p>}
                       {game.observations && <p className="mt-2 whitespace-pre-wrap text-xs text-muted-foreground">{game.observations}</p>}

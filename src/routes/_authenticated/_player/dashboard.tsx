@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { CalendarDays, CheckCircle2 } from "lucide-react";
+import { CalendarDays, CheckCircle2, ExternalLink, Video } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { EmptyState, PageHeader, PlayerAvatar, PositionBadge, Section } from "@/components/common/Page";
 import { memberQueryOptions } from "@/lib/member";
-import { evaluationsQueryOptions, tasksQueryOptions, upcomingEventsQueryOptions } from "@/lib/queries";
+import { evaluationsQueryOptions, tasksQueryOptions, upcomingEventsQueryOptions, vodReviewsQueryOptions } from "@/lib/queries";
+import { videoAtTimestamp } from "@/lib/analysis";
 import { formatRating } from "@/lib/evaluation";
 import { effectiveTaskStatus } from "@/lib/constants";
 import { useI18n } from "@/i18n";
@@ -15,6 +17,7 @@ export const Route = createFileRoute("/_authenticated/_player/dashboard")({
     Promise.all([
       context.queryClient.ensureQueryData(upcomingEventsQueryOptions),
       context.queryClient.ensureQueryData(tasksQueryOptions),
+      context.queryClient.ensureQueryData(vodReviewsQueryOptions),
     ]),
   component: PlayerDashboard,
 });
@@ -24,6 +27,7 @@ function PlayerDashboard() {
   const { data: member } = useSuspenseQuery(memberQueryOptions);
   const { data: events } = useSuspenseQuery(upcomingEventsQueryOptions);
   const { data: tasks } = useSuspenseQuery(tasksQueryOptions);
+  const { data: vodReviews } = useSuspenseQuery(vodReviewsQueryOptions);
   const player = member?.player;
   const { data: evals = [] } = useQuery({ ...evaluationsQueryOptions(player?.id ?? ""), enabled: Boolean(player) });
   const latest = evals[0];
@@ -102,6 +106,10 @@ function PlayerDashboard() {
               })}
             </ul>
           )}
+        </Section>
+
+        <Section title={t("ops.vodReviews")} className="lg:col-span-3">
+          {vodReviews.length === 0 ? <EmptyState text={t("vod.empty")} /> : <ul className="divide-y divide-border">{vodReviews.slice(0, 4).map((review) => <li key={review.id} className="flex items-center gap-3 py-2.5"><Video className="size-4 shrink-0 text-primary" /><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{review.title}</p><p className="text-xs text-muted-foreground">{review.opponent ?? review.match_label ?? new Date(`${review.review_date}T12:00:00`).toLocaleDateString(locale)}</p></div><Badge variant="muted">{t(`vodCat.${review.category}`)}</Badge><Button variant="ghost" size="icon" asChild aria-label={t("vod.openVideo")}><a href={videoAtTimestamp(review.video_url, 0)} target="_blank" rel="noreferrer"><ExternalLink /></a></Button></li>)}</ul>}
         </Section>
       </div>
     </div>

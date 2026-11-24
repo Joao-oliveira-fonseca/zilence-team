@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,8 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { memberQueryOptions, type Player } from "@/lib/member";
 import { compositionList, type ScrimGame, type ScrimSession } from "@/lib/operations";
+import { parseDraftBans, parseDraftPicks, type DraftBan, type DraftPick } from "@/lib/draft";
 import { useI18n } from "@/i18n";
 import { ParticipantPicker } from "./OperationFields";
+import { DraftEditor } from "./DraftEditor";
 
 const NONE = "NONE";
 const orNull = (value: string) => value.trim() ? value.trim() : null;
@@ -25,6 +27,8 @@ export function ScrimGameDialog({ open, onOpenChange, session, game, gameNumber,
   const [duration, setDuration] = useState("");
   const [ourComp, setOurComp] = useState("");
   const [theirComp, setTheirComp] = useState("");
+  const [picks, setPicks] = useState<DraftPick[]>([]);
+  const [bans, setBans] = useState<DraftBan[]>([]);
   const [participantIds, setParticipantIds] = useState<string[]>([]);
   const [observations, setObservations] = useState("");
   const [positives, setPositives] = useState("");
@@ -36,6 +40,8 @@ export function ScrimGameDialog({ open, onOpenChange, session, game, gameNumber,
       setDuration(game?.duration_minutes ? String(game.duration_minutes) : "");
       setOurComp(game?.zilence_composition.join(", ") ?? "");
       setTheirComp(game?.opponent_composition.join(", ") ?? "");
+      setPicks(game ? parseDraftPicks(game.picks) : []);
+      setBans(game ? parseDraftBans(game.bans) : []);
       setParticipantIds(game?.participant_ids ?? session.participant_ids);
       setObservations(game?.observations ?? "");
       setPositives(game?.positives ?? "");
@@ -45,11 +51,15 @@ export function ScrimGameDialog({ open, onOpenChange, session, game, gameNumber,
 
   const mutation = useMutation({
     mutationFn: async () => {
+      const ourPicks = picks.filter((pick) => pick.side === "ZILENCE").sort((a, b) => a.order - b.order);
+      const theirPicks = picks.filter((pick) => pick.side === "OPPONENT").sort((a, b) => a.order - b.order);
       const values = {
         result: result === NONE ? null : result as "WIN" | "LOSS",
         duration_minutes: duration ? Number(duration) : null,
-        zilence_composition: compositionList(ourComp),
-        opponent_composition: compositionList(theirComp),
+        zilence_composition: ourPicks.length ? ourPicks.map((pick) => pick.champion_name) : compositionList(ourComp),
+        opponent_composition: theirPicks.length ? theirPicks.map((pick) => pick.champion_name) : compositionList(theirComp),
+        picks: picks.map((pick) => ({ ...pick })),
+        bans: bans.map((ban) => ({ ...ban })),
         participant_ids: participantIds,
         observations: orNull(observations),
         positives: orNull(positives),
@@ -78,13 +88,12 @@ export function ScrimGameDialog({ open, onOpenChange, session, game, gameNumber,
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl">
-        <DialogHeader><DialogTitle className="font-display text-2xl uppercase">{t(game ? "ops.editGame" : "ops.addGame")} · {gameNumber}</DialogTitle></DialogHeader>
+      <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-5xl">
+        <DialogHeader><DialogTitle className="font-display text-2xl uppercase">{t(game ? "ops.editGame" : "ops.addGame")} · {gameNumber}</DialogTitle><DialogDescription>{t("draft.gameDialogHint")}</DialogDescription></DialogHeader>
         <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5"><Label>{t("ops.result")}</Label><Select value={result} onValueChange={setResult}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value={NONE}>{t("ops.noResult")}</SelectItem><SelectItem value="WIN">WIN</SelectItem><SelectItem value="LOSS">LOSS</SelectItem></SelectContent></Select></div>
           <div className="space-y-1.5"><Label htmlFor="game-duration">{t("ops.duration")} ({t("ops.minutes")})</Label><Input id="game-duration" type="number" min={1} max={1440} value={duration} onChange={(e) => setDuration(e.target.value)} /></div>
-          <div className="space-y-1.5"><Label htmlFor="our-comp">{t("ops.composition")}</Label><Textarea id="our-comp" rows={2} placeholder={t("ops.compositionHint")} value={ourComp} onChange={(e) => setOurComp(e.target.value)} /></div>
-          <div className="space-y-1.5"><Label htmlFor="their-comp">{t("ops.opponentComposition")}</Label><Textarea id="their-comp" rows={2} placeholder={t("ops.compositionHint")} value={theirComp} onChange={(e) => setTheirComp(e.target.value)} /></div>
+          <DraftEditor picks={picks} bans={bans} onPicksChange={setPicks} onBansChange={setBans} />
           <div className="sm:col-span-2"><ParticipantPicker players={players} value={participantIds} onChange={setParticipantIds} /></div>
           <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="game-observations">{t("ops.observations")}</Label><Textarea id="game-observations" rows={2} maxLength={3000} value={observations} onChange={(e) => setObservations(e.target.value)} /></div>
           <div className="space-y-1.5"><Label htmlFor="game-positives">{t("ops.positives")}</Label><Textarea id="game-positives" rows={3} maxLength={3000} value={positives} onChange={(e) => setPositives(e.target.value)} /></div>

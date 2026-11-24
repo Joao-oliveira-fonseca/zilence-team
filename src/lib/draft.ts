@@ -24,13 +24,13 @@ const isSide = (value: unknown): value is DraftSide => value === "ZILENCE" || va
 export function parseDraftPicks(value: Json): DraftPick[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((entry, index) => {
-    if (!isRecord(entry) || typeof entry.champion_id !== "string" || typeof entry.champion_name !== "string" || !isSide(entry.side) || !isPosition(entry.position)) return [];
+    if (!isRecord(entry) || typeof entry["champion_id"] !== "string" || typeof entry["champion_name"] !== "string" || !isSide(entry["side"]) || !isPosition(entry["position"])) return [];
     return [{
-      champion_id: entry.champion_id,
-      champion_name: entry.champion_name,
-      side: entry.side,
-      position: entry.position,
-      order: typeof entry.order === "number" ? entry.order : index + 1,
+      champion_id: entry["champion_id"],
+      champion_name: entry["champion_name"],
+      side: entry["side"],
+      position: entry["position"],
+      order: typeof entry["order"] === "number" ? entry["order"] : index + 1,
     }];
   });
 }
@@ -38,12 +38,12 @@ export function parseDraftPicks(value: Json): DraftPick[] {
 export function parseDraftBans(value: Json): DraftBan[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((entry, index) => {
-    if (!isRecord(entry) || typeof entry.champion_id !== "string" || typeof entry.champion_name !== "string" || !isSide(entry.side)) return [];
+    if (!isRecord(entry) || typeof entry["champion_id"] !== "string" || typeof entry["champion_name"] !== "string" || !isSide(entry["side"])) return [];
     return [{
-      champion_id: entry.champion_id,
-      champion_name: entry.champion_name,
-      side: entry.side,
-      order: typeof entry.order === "number" ? entry.order : index + 1,
+      champion_id: entry["champion_id"],
+      champion_name: entry["champion_name"],
+      side: entry["side"],
+      order: typeof entry["order"] === "number" ? entry["order"] : index + 1,
     }];
   });
 }

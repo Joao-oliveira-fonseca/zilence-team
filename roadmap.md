@@ -21,13 +21,19 @@
 ## Ajuste solicitado (concluído)
 - [x] Todos os campeões de LoL disponíveis em cada posição: TOP, JUNGLE, MID, ADC e SUPPORT
 
-## Etapa 4 — Analysis & Privacy
-- [ ] Coach Notes, VOD Review, Draft Analysis
-- [x] Visibility Control (avaliações, Champion Pool, tarefas, eventos, scrims)
+## Etapa 4 — Analysis & Privacy (concluída)
+- [x] Coach Notes permanentemente privadas, com busca, filtros e fixação
+- [x] VOD Review com player e timestamps navegáveis
+- [x] Draft Analysis com composições, estratégia, matchups e Win Conditions
+- [x] Visibility Control (avaliações, Champion Pool, VODs, drafts, tarefas, eventos, scrims)
 
-## Ajuste solicitado — Drafts de scrims
-- [ ] Registrar picks e bans de cada partida de scrim
-- [ ] Histórico de escolhas filtrável por função e campeão
+## Ajuste solicitado — Drafts de scrims (concluído)
+- [x] Picks por função e bans de ambas as equipes em cada Game
+- [x] Histórico por função e campeão, com W/L, Win Rate e partidas recentes
+
+## Ajuste solicitado — Links de e-mail
+- [x] Convites e recuperação abrem diretamente na ZILENCE usando o endereço atual da plataforma
+- [ ] Usar o endereço público gerado após a publicação (sem domínio próprio no momento)
 
 ## Etapa 5 — Finalization
 - [ ] Histórico/gráficos, notificações, Team Management, responsividade, testes de segurança

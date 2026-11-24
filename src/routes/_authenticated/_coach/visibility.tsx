@@ -14,34 +14,40 @@ import { useI18n, type TranslationKey } from "@/i18n";
 import type { Database } from "@/integrations/supabase/types";
 
 type Level = Database["public"]["Enums"]["visibility_level"];
-type Kind = "evaluations" | "champions" | "tasks" | "events" | "scrims";
+type Kind = "evaluations" | "champions" | "tasks" | "events" | "scrims" | "vods" | "drafts";
 type Item = { id: string; kind: Kind; name: string; playerIds: string[]; level: Level; updated: string; coach: string | null };
 
-const TABLE: Record<Kind, "player_evaluations" | "champion_pool" | "team_tasks" | "calendar_events" | "scrim_sessions"> = {
+const TABLE: Record<Kind, "player_evaluations" | "champion_pool" | "team_tasks" | "calendar_events" | "scrim_sessions" | "vod_reviews" | "draft_analyses"> = {
   evaluations: "player_evaluations",
   champions: "champion_pool",
   tasks: "team_tasks",
   events: "calendar_events",
   scrims: "scrim_sessions",
+  vods: "vod_reviews",
+  drafts: "draft_analyses",
 };
 
 const itemsQuery = queryOptions({
   queryKey: ["visibility-items"],
   queryFn: async (): Promise<Item[]> => {
-    const [ev, cp, tk, ce, sr] = await Promise.all([
+    const [ev, cp, tk, ce, sr, vr, da] = await Promise.all([
       supabase.from("player_evaluations").select("id, player_id, overall, evaluated_at, visibility, updated_at, coach_name"),
       supabase.from("champion_pool").select("id, player_id, champion_name, position, visibility, updated_at"),
       supabase.from("team_tasks").select("id, player_id, title, visibility, updated_at"),
       supabase.from("calendar_events").select("id, related_player_id, participant_ids, title, visibility, updated_at"),
       supabase.from("scrim_sessions").select("id, opponent, participant_ids, visibility, updated_at"),
+      supabase.from("vod_reviews").select("id, player_id, title, visibility, updated_at, coach_name"),
+      supabase.from("draft_analyses").select("id, player_id, title, visibility, updated_at, coach_name"),
     ]);
-    for (const r of [ev, cp, tk, ce, sr]) if (r.error) throw r.error;
+    for (const r of [ev, cp, tk, ce, sr, vr, da]) if (r.error) throw r.error;
     return [
       ...(ev.data ?? []).map((e) => ({ id: e.id, kind: "evaluations" as const, name: `Overall ${formatRating(e.overall)} · ${new Date(e.evaluated_at).toLocaleDateString()}`, playerIds: [e.player_id], level: e.visibility, updated: e.updated_at, coach: e.coach_name })),
       ...(cp.data ?? []).map((e) => ({ id: e.id, kind: "champions" as const, name: `${e.champion_name} (${e.position})`, playerIds: [e.player_id], level: e.visibility, updated: e.updated_at, coach: null })),
       ...(tk.data ?? []).map((e) => ({ id: e.id, kind: "tasks" as const, name: e.title, playerIds: e.player_id ? [e.player_id] : [], level: e.visibility, updated: e.updated_at, coach: null })),
       ...(ce.data ?? []).map((e) => ({ id: e.id, kind: "events" as const, name: e.title, playerIds: [...new Set([...e.participant_ids, ...(e.related_player_id ? [e.related_player_id] : [])])], level: e.visibility, updated: e.updated_at, coach: null })),
       ...(sr.data ?? []).map((e) => ({ id: e.id, kind: "scrims" as const, name: `Scrim vs ${e.opponent}`, playerIds: e.participant_ids, level: e.visibility, updated: e.updated_at, coach: null })),
+      ...(vr.data ?? []).map((e) => ({ id: e.id, kind: "vods" as const, name: e.title, playerIds: e.player_id ? [e.player_id] : [], level: e.visibility, updated: e.updated_at, coach: e.coach_name })),
+      ...(da.data ?? []).map((e) => ({ id: e.id, kind: "drafts" as const, name: e.title, playerIds: e.player_id ? [e.player_id] : [], level: e.visibility, updated: e.updated_at, coach: e.coach_name })),
     ].sort((a, b) => b.updated.localeCompare(a.updated));
   },
 });
