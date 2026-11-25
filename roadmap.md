@@ -35,7 +35,7 @@
 - [x] Avaliações começam visíveis ao jogador avaliado
 - [x] Champion Pool começa visível ao jogador correspondente
 - [x] Eventos do calendário começam visíveis para toda a equipe
-- [ ] Aplicar aos registros antigos (aguardando confirmação; padrão atual preserva escolhas anteriores)
+- [x] Registros antigos atualizados: avaliações/pools PLAYER e eventos TEAM
 
 ## Ajuste solicitado — Links de e-mail
 - [ ] Publicar site público para os e-mails abrirem sem acesso de espectador (bloqueado: publicação não autorizada)
