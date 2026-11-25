@@ -28,11 +28,14 @@ export function StatCard({ label, value, hint, accent = false }: { label: string
   );
 }
 
-export function Section({ title, action, children, className }: { title: string; action?: ReactNode; children: ReactNode; className?: string }) {
+export function Section({ title, description, action, children, className }: { title: string; description?: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
     <section className={cn("panel flex flex-col", className)}>
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h2 className="eyebrow text-foreground">{title}</h2>
+      <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+        <div>
+          <h2 className="eyebrow text-foreground">{title}</h2>
+          {description && <p className="mt-1 text-xs text-muted-foreground">{description}</p>}
+        </div>
         {action}
       </div>
       <div className="flex-1 p-4">{children}</div>

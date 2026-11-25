@@ -50,6 +50,13 @@
       "when": 1795612019641,
       "tag": "0006_set_automatic_content_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795612351862,
+      "tag": "0007_add_notifications_and_team_administration",
+      "breakpoints": true
     }
   ]
 }

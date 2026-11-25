@@ -170,3 +170,43 @@ export const recentEvaluationsQueryOptions = queryOptions({
     return data;
   },
 });
+
+export const teamSettingsQueryOptions = queryOptions({
+  queryKey: ["team-settings"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("team_settings").select("*").eq("id", 1).single();
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const profilesQueryOptions = queryOptions({
+  queryKey: ["profiles"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("profiles").select("*").order("display_name");
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const userRolesQueryOptions = queryOptions({
+  queryKey: ["user-roles"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("user_roles").select("*");
+    if (error) throw error;
+    return data;
+  },
+});
+
+export const notificationsQueryOptions = queryOptions({
+  queryKey: ["notifications"],
+  queryFn: async () => {
+    const { error: syncError } = await supabase.rpc("sync_task_deadline_notifications");
+    if (syncError) throw syncError;
+    const { data, error } = await supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(50);
+    if (error) throw error;
+    return data;
+  },
+  staleTime: 30_000,
+  refetchInterval: 60_000,
+});

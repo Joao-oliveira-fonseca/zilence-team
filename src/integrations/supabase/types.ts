@@ -289,6 +289,47 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          data: Json
+          entity_id: string
+          entity_type: string
+          id: string
+          kind: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          entity_id: string
+          entity_type: string
+          id?: string
+          kind: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_evaluations: {
         Row: {
           coach_id: string | null
@@ -803,6 +844,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_coach_role: { Args: { _user_id: string }; Returns: undefined }
       can_read_scrim_session: {
         Args: { _session_id: string }
         Returns: boolean
@@ -822,6 +864,29 @@ export type Database = {
         Returns: undefined
       }
       my_player_id: { Args: never; Returns: string }
+      notify_recipients: {
+        Args: {
+          _entity_id: string
+          _entity_type: string
+          _kind: string
+          _name: string
+          _participant_ids: string[]
+          _player_id: string
+          _team_all: boolean
+          _visibility: Database["public"]["Enums"]["visibility_level"]
+        }
+        Returns: undefined
+      }
+      notify_user: {
+        Args: {
+          _entity_id: string
+          _entity_type: string
+          _kind: string
+          _name: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
       pending_accounts: {
         Args: never
         Returns: {
@@ -831,6 +896,8 @@ export type Database = {
           id: string
         }[]
       }
+      remove_coach_role: { Args: { _user_id: string }; Returns: undefined }
+      sync_task_deadline_notifications: { Args: never; Returns: undefined }
       unlink_player_account: {
         Args: { _player_id: string }
         Returns: undefined

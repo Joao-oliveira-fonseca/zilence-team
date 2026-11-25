@@ -2,7 +2,6 @@ import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-route
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import {
-  Bell,
   CalendarRange,
   Eye,
   LayoutDashboard,
@@ -38,8 +37,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { memberQueryOptions, type AppRole } from "@/lib/member";
@@ -166,17 +165,7 @@ export function AppShell() {
           <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b border-border bg-background/85 px-3 backdrop-blur md:px-5">
             <SidebarTrigger />
             <div className="flex-1" />
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label={t("nav.notifications")}>
-                  <Bell />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-72">
-                <p className="eyebrow">{t("nav.notifications")}</p>
-                <p className="mt-3 text-sm text-muted-foreground">{t("nav.noNotifications")}</p>
-              </PopoverContent>
-            </Popover>
+            <NotificationCenter />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 rounded-md px-1.5 py-1 hover:bg-accent">
