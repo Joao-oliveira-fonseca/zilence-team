@@ -31,9 +31,14 @@
 - [x] Picks por função e bans de ambas as equipes em cada Game
 - [x] Histórico por função e campeão, com W/L, Win Rate e partidas recentes
 
+## Ajuste solicitado — Visibilidade automática (concluído para novos registros)
+- [x] Avaliações começam visíveis ao jogador avaliado
+- [x] Champion Pool começa visível ao jogador correspondente
+- [x] Eventos do calendário começam visíveis para toda a equipe
+- [ ] Aplicar aos registros antigos (aguardando confirmação; padrão atual preserva escolhas anteriores)
+
 ## Ajuste solicitado — Links de e-mail
-- [x] Convites e recuperação abrem diretamente na ZILENCE usando o endereço atual da plataforma
-- [ ] Usar o endereço público gerado após a publicação (sem domínio próprio no momento)
+- [ ] Publicar site público para os e-mails abrirem sem acesso de espectador (bloqueado: publicação não autorizada)
 
 ## Etapa 5 — Finalization
 - [ ] Histórico/gráficos, notificações, Team Management, responsividade, testes de segurança

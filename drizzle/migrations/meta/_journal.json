@@ -43,6 +43,13 @@
       "when": 1795398761244,
       "tag": "0005_add_scrim_picks_and_bans",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795612019641,
+      "tag": "0006_set_automatic_content_visibility",
+      "breakpoints": true
     }
   ]
 }
