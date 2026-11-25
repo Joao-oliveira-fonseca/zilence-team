@@ -31,11 +31,11 @@
 - [x] Picks por função e bans de ambas as equipes em cada Game
 - [x] Histórico por função e campeão, com W/L, Win Rate e partidas recentes
 
-## Ajuste solicitado — Visibilidade automática (concluído para novos registros)
+## Ajuste solicitado — Visibilidade automática (concluído)
 - [x] Avaliações começam visíveis ao jogador avaliado
 - [x] Champion Pool começa visível ao jogador correspondente
 - [x] Eventos do calendário começam visíveis para toda a equipe
-- [x] Registros antigos atualizados: avaliações/pools PLAYER e eventos TEAM
+- [x] Registros antigos PRIVATE atualizados: avaliações/pools PLAYER e eventos TEAM
 
 ## Ajuste solicitado — Links de e-mail
 - [ ] Publicar site público para os e-mails abrirem sem acesso de espectador (bloqueado: publicação não autorizada)
