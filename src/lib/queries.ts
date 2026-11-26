@@ -210,3 +210,16 @@ export const notificationsQueryOptions = queryOptions({
   staleTime: 30_000,
   refetchInterval: 60_000,
 });
+
+export const auditLogQueryOptions = queryOptions({
+  queryKey: ["audit-log"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("audit_log")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw error;
+    return data;
+  },
+});

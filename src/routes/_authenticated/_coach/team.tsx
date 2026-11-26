@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/Page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TeamAuditLog } from "@/components/team/TeamAuditLog";
 import { TeamIdentity } from "@/components/team/TeamIdentity";
 import { TeamMembers } from "@/components/team/TeamMembers";
-import { pendingAccountsQueryOptions, playersQueryOptions, profilesQueryOptions, teamSettingsQueryOptions, userRolesQueryOptions } from "@/lib/queries";
+import { auditLogQueryOptions, pendingAccountsQueryOptions, playersQueryOptions, profilesQueryOptions, teamSettingsQueryOptions, userRolesQueryOptions } from "@/lib/queries";
 import { useI18n } from "@/i18n";
 
 export const Route = createFileRoute("/_authenticated/_coach/team")({
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/_authenticated/_coach/team")({
       context.queryClient.ensureQueryData(profilesQueryOptions),
       context.queryClient.ensureQueryData(userRolesQueryOptions),
       context.queryClient.ensureQueryData(pendingAccountsQueryOptions),
+      context.queryClient.ensureQueryData(auditLogQueryOptions),
     ]),
   component: TeamPage,
 });
@@ -37,9 +39,11 @@ function TeamPage() {
         <TabsList className="w-full justify-start overflow-x-auto sm:w-auto">
           <TabsTrigger value="identity">{t("team.identity")}</TabsTrigger>
           <TabsTrigger value="members">{t("team.membersAndPermissions")}</TabsTrigger>
+          <TabsTrigger value="audit">{t("team.audit")}</TabsTrigger>
         </TabsList>
         <TabsContent value="identity" className="mt-4"><TeamIdentity /></TabsContent>
         <TabsContent value="members" className="mt-4"><TeamMembers /></TabsContent>
+        <TabsContent value="audit" className="mt-4"><TeamAuditLog /></TabsContent>
       </Tabs>
     </div>
   );

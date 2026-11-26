@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { EmptyState, PlayerAvatar, PositionBadge, Section, StatCard } from "@/components/common/Page";
 import { supabase } from "@/integrations/supabase/client";
 import { pendingAccountsQueryOptions, playersQueryOptions, profilesQueryOptions, userRolesQueryOptions } from "@/lib/queries";
+import { writeAuditEntry } from "@/lib/audit";
 import { useI18n } from "@/i18n";
 
 type PendingAccount = { id: string; email: string | null; display_name: string | null };
@@ -40,9 +41,16 @@ export function TeamMembers() {
   }
 
   const promote = useMutation({
-    mutationFn: async (userId: string) => {
-      const { error } = await supabase.rpc("assign_coach_role", { _user_id: userId });
+    mutationFn: async (account: PendingAccount) => {
+      const { error } = await supabase.rpc("assign_coach_role", { _user_id: account.id });
       if (error) throw error;
+      await writeAuditEntry({
+        action: "role.coach_added",
+        entityType: "user",
+        entityId: account.id,
+        entityLabel: account.display_name ?? account.email,
+        details: { account: account.email ?? "—" },
+      });
     },
     onSuccess: () => {
       toast.success(t("team.coachAdded"));
@@ -55,6 +63,14 @@ export function TeamMembers() {
     mutationFn: async () => {
       const { error } = await supabase.rpc("link_player_account", { _player_id: selectedPlayer, _user_id: assigningPlayer!.id });
       if (error) throw error;
+      const linked = players.find((player) => player.id === selectedPlayer);
+      await writeAuditEntry({
+        action: "account.player_linked",
+        entityType: "player",
+        entityId: selectedPlayer,
+        entityLabel: linked?.nickname ?? null,
+        details: { account: assigningPlayer!.email ?? assigningPlayer!.display_name ?? "—" },
+      });
     },
     onSuccess: () => {
       toast.success(t("team.playerAdded"));
@@ -66,9 +82,16 @@ export function TeamMembers() {
   });
 
   const remove = useMutation({
-    mutationFn: async (userId: string) => {
-      const { error } = await supabase.rpc("remove_coach_role", { _user_id: userId });
+    mutationFn: async (account: PendingAccount) => {
+      const { error } = await supabase.rpc("remove_coach_role", { _user_id: account.id });
       if (error) throw error;
+      await writeAuditEntry({
+        action: "role.coach_removed",
+        entityType: "user",
+        entityId: account.id,
+        entityLabel: account.display_name ?? account.email,
+        details: { account: account.email ?? "—" },
+      });
     },
     onSuccess: () => {
       toast.success(t("team.coachRemoved"));
@@ -123,7 +146,7 @@ export function TeamMembers() {
                     <Button size="sm" variant="soft" disabled={makePlayer.isPending} onClick={() => { setAssigningPlayer(account); setSelectedPlayer(""); }}>
                       <UserRoundPlus />{t("team.makePlayer")}
                     </Button>
-                    <Button size="sm" variant="outline" disabled={promote.isPending} onClick={() => promote.mutate(account.id)}>
+                    <Button size="sm" variant="outline" disabled={promote.isPending} onClick={() => promote.mutate(account)}>
                       <ShieldPlus />{t("team.makeCoach")}
                     </Button>
                   </div>
@@ -202,7 +225,7 @@ export function TeamMembers() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={(event) => { event.preventDefault(); if (removing) remove.mutate(removing.id); }}>{t("common.confirm")}</AlertDialogAction>
+            <AlertDialogAction onClick={(event) => { event.preventDefault(); if (removing) remove.mutate(removing); }}>{t("common.confirm")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

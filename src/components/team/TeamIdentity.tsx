@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Section } from "@/components/common/Page";
 import { LogoMark } from "@/components/common/Logo";
 import { supabase } from "@/integrations/supabase/client";
+import { writeAuditEntry } from "@/lib/audit";
 import { teamSettingsQueryOptions } from "@/lib/queries";
 import { useI18n } from "@/i18n";
 
@@ -37,6 +38,18 @@ export function TeamIdentity() {
         })
         .eq("id", 1);
       if (error) throw error;
+      const changed: string[] = [];
+      if (settings.name !== name.trim()) changed.push(t("team.name"));
+      if (settings.slogan !== slogan.trim()) changed.push(t("team.slogan"));
+      if (settings.game !== game.trim()) changed.push(t("team.game"));
+      if ((settings.logo_url ?? "") !== trimmedLogo) changed.push(t("team.logoUrl"));
+      if ((settings.about ?? "") !== about.trim()) changed.push(t("team.about"));
+      await writeAuditEntry({
+        action: "team.settings_updated",
+        entityType: "team_settings",
+        entityLabel: name.trim(),
+        details: changed.length > 0 ? { fields: changed.join(", ") } : {},
+      });
     },
     onSuccess: () => {
       toast.success(t("team.saved"));

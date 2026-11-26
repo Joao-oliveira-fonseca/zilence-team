@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { writeAuditEntry } from "@/lib/audit";
 import { invitePlayer } from "@/lib/invites.functions";
 import { pendingAccountsQueryOptions } from "@/lib/queries";
 import type { Player } from "@/lib/member";
@@ -25,8 +26,17 @@ export function InviteDialog({ player, onOpenChange }: { player: Player | null; 
   }, [player]);
 
   const mutation = useMutation({
-    mutationFn: () =>
-      invite({ data: { playerId: player!.id, email, redirectTo: `${window.location.origin}/reset-password` } }),
+    mutationFn: async () => {
+      const result = await invite({ data: { playerId: player!.id, email, redirectTo: `${window.location.origin}/reset-password` } });
+      await writeAuditEntry({
+        action: "account.invited",
+        entityType: "player",
+        entityId: player!.id,
+        entityLabel: player!.nickname,
+        details: { email },
+      });
+      return result;
+    },
     onSuccess: (result) => {
       toast.success(result.existing ? t("players.inviteLinkedExisting") : t("players.inviteSent", { email }));
       queryClient.invalidateQueries({ queryKey: ["players"] });
@@ -78,6 +88,14 @@ export function LinkAccountDialog({ player, onOpenChange }: { player: Player | n
     mutationFn: async () => {
       const { error } = await supabase.rpc("link_player_account", { _player_id: player!.id, _user_id: selected! });
       if (error) throw error;
+      const account = pending.find((acc) => acc.id === selected);
+      await writeAuditEntry({
+        action: "account.player_linked",
+        entityType: "player",
+        entityId: player!.id,
+        entityLabel: player!.nickname,
+        details: { account: account?.email ?? "—" },
+      });
     },
     onSuccess: () => {
       toast.success(t("players.linkDone"));

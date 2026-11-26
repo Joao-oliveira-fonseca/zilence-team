@@ -583,4 +583,17 @@ export const es: Dictionary = {
   "eval.comparison": "Comparación con el período anterior",
   "eval.noPrevious": "No hay evaluaciones en el período anterior para comparar.",
   "overview.teamEvolution": "Evolución colectiva del Overall Rating",
+
+  "team.audit": "Historial de cambios",
+  "team.auditHint": "Cambios de función, liberaciones de cuentas y actualizaciones del equipo, con fecha y responsable.",
+  "team.auditEmpty": "Todavía no hay cambios registrados.",
+  "team.auditFilter.all": "Todos",
+  "team.auditFilter.roles": "Funciones",
+  "team.auditFilter.accounts": "Cuentas",
+  "team.auditFilter.team": "Equipo",
+  "audit.action.role.coach_added": "Función de coach asignada",
+  "audit.action.role.coach_removed": "Función de coach retirada",
+  "audit.action.account.player_linked": "Cuenta vinculada a un jugador",
+  "audit.action.account.invited": "Invitación de cuenta enviada",
+  "audit.action.team.settings_updated": "Información del equipo actualizada",
 };

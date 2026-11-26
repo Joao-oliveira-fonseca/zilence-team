@@ -582,6 +582,19 @@ export const pt = {
   "eval.comparison": "Comparação com o período anterior",
   "eval.noPrevious": "Sem avaliações no período anterior para comparar.",
   "overview.teamEvolution": "Evolução coletiva do Overall Rating",
+
+  "team.audit": "Histórico de alterações",
+  "team.auditHint": "Mudanças de função, liberações de contas e atualizações da equipe, com data e responsável.",
+  "team.auditEmpty": "Nenhuma alteração registrada ainda.",
+  "team.auditFilter.all": "Todas",
+  "team.auditFilter.roles": "Funções",
+  "team.auditFilter.accounts": "Contas",
+  "team.auditFilter.team": "Equipe",
+  "audit.action.role.coach_added": "Função de coach atribuída",
+  "audit.action.role.coach_removed": "Função de coach removida",
+  "audit.action.account.player_linked": "Conta vinculada a um jogador",
+  "audit.action.account.invited": "Convite de conta enviado",
+  "audit.action.team.settings_updated": "Informações da equipe atualizadas",
 } as const;
 
 export type TranslationKey = keyof typeof pt;
