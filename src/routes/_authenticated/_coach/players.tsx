@@ -38,7 +38,16 @@ import { useI18n } from "@/i18n";
 type PlayersSearch = { new?: boolean; player?: string };
 
 export const Route = createFileRoute("/_authenticated/_coach/players")({
-  head: () => ({ meta: [{ title: "Players — ZILENCE" }, { name: "description", content: "Cadastro e gerenciamento dos jogadores da ZILENCE." }] }),
+  head: () => ({
+    meta: [
+      { title: "Players — ZILENCE" },
+      { name: "description", content: "Cadastro e gerenciamento dos jogadores da ZILENCE." },
+      { property: "og:title", content: "Players — ZILENCE" },
+      { property: "og:description", content: "Elenco, avaliações, Champion Pools e histórico dos jogadores ZILENCE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   validateSearch: (search: Record<string, unknown>): PlayersSearch => ({
     ...(search["new"] === true || search["new"] === "true" ? { new: true } : {}),
     ...(typeof search["player"] === "string" ? { player: search["player"] } : {}),

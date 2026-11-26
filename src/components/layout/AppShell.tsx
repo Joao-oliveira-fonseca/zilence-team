@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import {
   CalendarRange,
@@ -42,6 +42,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { memberQueryOptions, type AppRole } from "@/lib/member";
+import { teamSettingsQueryOptions } from "@/lib/queries";
 import { isLanguage, useI18n, LANGUAGES, type TranslationKey } from "@/i18n";
 import { useChangeLanguage } from "@/components/common/LanguageSwitch";
 import { LogoLockup, LogoMark } from "@/components/common/Logo";
@@ -78,11 +79,12 @@ function AppSidebar({ role }: { role: AppRole | null }) {
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const items = navFor(role);
+  const { data: team } = useQuery({ ...teamSettingsQueryOptions, enabled: role !== null });
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="px-3 py-4">
-        {collapsed ? <LogoMark className="mx-auto size-8" /> : <LogoLockup />}
+        {collapsed ? <LogoMark className="mx-auto size-8" src={team?.logo_url ?? null} alt={team?.name ?? "ZILENCE"} /> : <LogoLockup name={team?.name ?? "ZILENCE"} slogan={team?.slogan ?? "BUILT TO COMPETE."} logoUrl={team?.logo_url ?? null} />}
       </SidebarHeader>
       <SidebarContent>
         {items.length > 0 && (
@@ -119,7 +121,7 @@ function AppSidebar({ role }: { role: AppRole | null }) {
       </SidebarContent>
       <SidebarFooter className="px-3 pb-4">
         {!collapsed && (
-          <p className="font-display text-[10px] font-semibold tracking-[0.3em] text-muted-foreground">BUILT TO COMPETE.</p>
+          <p className="font-display text-[10px] font-semibold tracking-[0.3em] text-muted-foreground">{team?.slogan ?? "BUILT TO COMPETE."}</p>
         )}
       </SidebarFooter>
     </Sidebar>

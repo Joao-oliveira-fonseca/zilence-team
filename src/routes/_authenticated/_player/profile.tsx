@@ -7,7 +7,16 @@ import { memberQueryOptions } from "@/lib/member";
 import { useI18n } from "@/i18n";
 
 export const Route = createFileRoute("/_authenticated/_player/profile")({
-  head: () => ({ meta: [{ title: "My Profile — ZILENCE" }] }),
+  head: () => ({
+    meta: [
+      { title: "My Profile — ZILENCE" },
+      { name: "description", content: "Perfil, dados competitivos e preferências do jogador ZILENCE." },
+      { property: "og:title", content: "My Profile — ZILENCE" },
+      { property: "og:description", content: "Informações pessoais do integrante da equipe ZILENCE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: ProfilePage,
 });
 

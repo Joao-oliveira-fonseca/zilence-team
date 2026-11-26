@@ -40,5 +40,10 @@
 ## Ajuste solicitado — Links de e-mail
 - [ ] Publicar site público para os e-mails abrirem sem acesso de espectador (bloqueado: publicação não autorizada)
 
-## Etapa 5 — Finalization
-- [ ] Histórico/gráficos, notificações, Team Management, responsividade, testes de segurança
+## Etapa 5 — Finalization (concluída)
+- [x] Histórico individual e coletivo, gráficos e comparação entre períodos
+- [x] Notificações internas com leitura, permissões e alertas de prazo
+- [x] Team Management: identidade, logo, integrantes, coaches e permissões
+- [x] Contas aguardando liberação: permitir tornar jogador ou coach no Team Management
+- [x] Internacionalização, responsividade, otimização e revisão estática de segurança
+- [x] Compilação automática sem erros; testes e preview não executados por preferência do usuário

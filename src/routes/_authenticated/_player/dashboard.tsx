@@ -12,7 +12,16 @@ import { effectiveTaskStatus } from "@/lib/constants";
 import { useI18n } from "@/i18n";
 
 export const Route = createFileRoute("/_authenticated/_player/dashboard")({
-  head: () => ({ meta: [{ title: "My Dashboard — ZILENCE" }] }),
+  head: () => ({
+    meta: [
+      { title: "My Dashboard — ZILENCE" },
+      { name: "description", content: "Painel pessoal do jogador com avaliações, eventos, tarefas e VOD Reviews." },
+      { property: "og:title", content: "My Dashboard — ZILENCE" },
+      { property: "og:description", content: "Rotina e desempenho competitivo do jogador ZILENCE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.ensureQueryData(upcomingEventsQueryOptions),

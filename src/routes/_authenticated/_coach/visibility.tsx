@@ -53,7 +53,16 @@ const itemsQuery = queryOptions({
 });
 
 export const Route = createFileRoute("/_authenticated/_coach/visibility")({
-  head: () => ({ meta: [{ title: "Visibility Control — ZILENCE" }] }),
+  head: () => ({
+    meta: [
+      { title: "Visibility Control — ZILENCE" },
+      { name: "description", content: "Controle central de visibilidade dos conteúdos competitivos da ZILENCE." },
+      { property: "og:title", content: "Visibility Control — ZILENCE" },
+      { property: "og:description", content: "Permissões de acesso para jogadores e equipe na plataforma ZILENCE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   loader: ({ context }) => Promise.all([context.queryClient.ensureQueryData(itemsQuery), context.queryClient.ensureQueryData(playersQueryOptions)]),
   component: VisibilityPage,
 });

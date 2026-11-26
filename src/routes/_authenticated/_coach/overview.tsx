@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { CalendarDays, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +11,16 @@ import { useI18n } from "@/i18n";
 import { formatRating } from "@/lib/evaluation";
 
 export const Route = createFileRoute("/_authenticated/_coach/overview")({
-  head: () => ({ meta: [{ title: "Overview — ZILENCE" }, { name: "description", content: "Visão geral da equipe ZILENCE." }] }),
+  head: () => ({
+    meta: [
+      { title: "Overview — ZILENCE" },
+      { name: "description", content: "Visão geral da equipe ZILENCE." },
+      { property: "og:title", content: "Overview — ZILENCE" },
+      { property: "og:description", content: "Indicadores, evolução e próximas atividades da equipe ZILENCE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.ensureQueryData(playersQueryOptions),
@@ -34,6 +44,19 @@ function Overview() {
   const latestByPlayer = new Map<string, number>();
   for (const e of evals) if (e.overall !== null && !latestByPlayer.has(e.player_id)) latestByPlayer.set(e.player_id, Number(e.overall));
   const teamAvg = latestByPlayer.size ? [...latestByPlayer.values()].reduce((a, b) => a + b, 0) / latestByPlayer.size : null;
+  const dailyRatings = new Map<string, { sum: number; count: number }>();
+  for (const evaluation of [...evals].reverse()) {
+    if (evaluation.overall === null) continue;
+    const day = evaluation.evaluated_at.slice(0, 10);
+    const current = dailyRatings.get(day) ?? { sum: 0, count: 0 };
+    current.sum += Number(evaluation.overall);
+    current.count += 1;
+    dailyRatings.set(day, current);
+  }
+  const teamEvolution = [...dailyRatings.entries()].map(([day, value]) => ({
+    date: new Date(`${day}T12:00:00`).toLocaleDateString(locale, { day: "2-digit", month: "short" }),
+    overall: Number((value.sum / value.count).toFixed(2)),
+  }));
   const nick = (id: string) => players.find((p) => p.id === id)?.nickname ?? "—";
   const active = players.filter((p) => p.status === "active");
   const taskCounts = TASK_STATUSES.map((status) => ({
@@ -66,6 +89,21 @@ function Overview() {
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        {teamEvolution.length > 0 && (
+          <Section title={t("overview.teamEvolution")} className="lg:col-span-3">
+            <div className="h-56 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={teamEvolution} margin={{ top: 8, right: 12, left: -20, bottom: 0 }}>
+                  <CartesianGrid stroke="var(--border)" vertical={false} />
+                  <XAxis dataKey="date" stroke="var(--muted-foreground)" fontSize={11} />
+                  <YAxis domain={[0, 5]} ticks={[1, 2, 3, 4, 5]} stroke="var(--muted-foreground)" fontSize={11} width={24} />
+                  <Tooltip contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 6 }} />
+                  <Line type="monotone" dataKey="overall" name="Overall Rating" stroke="var(--primary)" strokeWidth={2.5} dot connectNulls />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </Section>
+        )}
         <Section
           title={t("overview.playersOverview")}
           className="lg:col-span-2"

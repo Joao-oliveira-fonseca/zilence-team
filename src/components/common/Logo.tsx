@@ -1,11 +1,11 @@
 import logoAsset from "@/assets/zilence-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
-export function LogoMark({ className }: { className?: string }) {
+export function LogoMark({ className, src, alt = "ZILENCE" }: { className?: string; src?: string | null; alt?: string }) {
   return (
     <img
-      src={logoAsset.url}
-      alt="ZILENCE"
+      src={src || logoAsset.url}
+      alt={alt}
       className={cn("aspect-square rounded-md object-cover", className)}
       width={40}
       height={40}
@@ -13,14 +13,14 @@ export function LogoMark({ className }: { className?: string }) {
   );
 }
 
-export function LogoLockup({ className, compact = false }: { className?: string; compact?: boolean }) {
+export function LogoLockup({ className, compact = false, name = "ZILENCE", slogan = "BUILT TO COMPETE.", logoUrl }: { className?: string; compact?: boolean; name?: string; slogan?: string; logoUrl?: string | null }) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <LogoMark className="size-9 ring-1 ring-border" />
+      <LogoMark className="size-9 ring-1 ring-border" src={logoUrl ?? null} alt={name} />
       {!compact && (
-        <div className="leading-none">
-          <div className="font-display text-xl font-bold tracking-[0.18em] text-foreground">ZILENCE</div>
-          <div className="mt-1 font-display text-[10px] font-semibold tracking-[0.3em] text-primary">BUILT TO COMPETE.</div>
+        <div className="min-w-0 leading-none">
+          <div className="truncate font-display text-xl font-bold tracking-[0.18em] text-foreground">{name}</div>
+          <div className="mt-1 truncate font-display text-[10px] font-semibold tracking-[0.3em] text-primary">{slogan}</div>
         </div>
       )}
     </div>

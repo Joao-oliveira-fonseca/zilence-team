@@ -100,34 +100,86 @@ export function PerformanceTab({ player, editable }: { player: Player; editable:
 }
 
 const PERIODS = ["all", "30", "90", "365"] as const;
+type Metric = "all" | "overall" | Category;
+
+function metricValue(evaluation: Evaluation, metric: Exclude<Metric, "all">) {
+  const value = metric === "overall" ? evaluation.overall : evaluation[avgField[metric]];
+  return value === null ? null : Number(value);
+}
 
 export function EvolutionChart({ evaluations }: { evaluations: Evaluation[] }) {
   const { t, locale } = useI18n();
   const [period, setPeriod] = useState<(typeof PERIODS)[number]>("all");
-  const series = useMemo(() => {
-    const since = period === "all" ? 0 : Date.now() - Number(period) * 86400000;
-    return [...evaluations]
-      .filter((e) => new Date(e.evaluated_at).getTime() >= since)
-      .reverse()
-      .map((e) => ({
-        date: new Date(e.evaluated_at).toLocaleDateString(locale, { day: "2-digit", month: "short" }),
-        overall: Number(e.overall),
-        ...Object.fromEntries(CATEGORY_KEYS.map((c) => [c, e[avgField[c]] === null ? null : Number(e[avgField[c]])])),
-      }));
-  }, [evaluations, period, locale]);
+  const [metric, setMetric] = useState<Metric>("overall");
+  const comparisonMetric = metric === "all" ? "overall" : metric;
+  const { series, currentAverage, previousAverage, hasPrevious } = useMemo(() => {
+    const ordered = [...evaluations].reverse();
+    const duration = period === "all" ? 0 : Number(period) * 86400000;
+    const since = period === "all" ? 0 : Date.now() - duration;
+    const current = ordered.filter((evaluation) => new Date(evaluation.evaluated_at).getTime() >= since);
+    const previous = period === "all" ? [] : ordered.filter((evaluation) => {
+      const time = new Date(evaluation.evaluated_at).getTime();
+      return time >= since - duration && time < since;
+    });
+    const toPoint = (evaluation: Evaluation) => ({
+      date: new Date(evaluation.evaluated_at).toLocaleDateString(locale, { day: "2-digit", month: "short" }),
+      overall: metricValue(evaluation, "overall"),
+      ...Object.fromEntries(CATEGORY_KEYS.map((category) => [category, metricValue(evaluation, category)])),
+    });
+    const currentPoints = current.map(toPoint);
+    const previousPoints = previous.map(toPoint);
+    const length = Math.max(currentPoints.length, previousPoints.length);
+    const chartSeries = Array.from({ length }, (_, index) => {
+      const currentPoint = currentPoints[index];
+      const previousPoint = previousPoints[index];
+      const previousEvaluation = previous[index];
+      return {
+        ...currentPoint,
+        date: currentPoint?.date ?? previousPoint?.date ?? "",
+        previous: previousEvaluation ? metricValue(previousEvaluation, comparisonMetric) : null,
+      };
+    });
+    const average = (items: Evaluation[]) => {
+      const values = items.map((evaluation) => metricValue(evaluation, comparisonMetric)).filter((value): value is number => value !== null);
+      return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+    };
+    return { series: chartSeries, currentAverage: average(current), previousAverage: average(previous), hasPrevious: previous.length > 0 };
+  }, [evaluations, period, locale, comparisonMetric]);
   const colors = ["var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)", "var(--destructive)"];
   return (
     <div className="rounded-md border border-border bg-surface p-3">
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="eyebrow">{t("eval.evolution")}</p>
-        <Select value={period} onValueChange={(v) => setPeriod(v as typeof period)}>
-          <SelectTrigger className="h-8 w-32" aria-label={t("eval.period")}><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {PERIODS.map((p) => <SelectItem key={p} value={p}>{t(`eval.period.${p}` as TranslationKey)}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        <div className="flex flex-wrap gap-2">
+          <Select value={metric} onValueChange={(value) => setMetric(value as Metric)}>
+            <SelectTrigger className="h-8 w-full sm:w-44" aria-label={t("eval.metric")}><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="overall">{t("eval.metric.overall")}</SelectItem>
+              <SelectItem value="all">{t("eval.metric.all")}</SelectItem>
+              {CATEGORY_KEYS.map((category) => <SelectItem key={category} value={category}>{t(`cat.${category}` as TranslationKey)}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={period} onValueChange={(value) => setPeriod(value as typeof period)}>
+            <SelectTrigger className="h-8 w-32" aria-label={t("eval.period")}><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {PERIODS.map((value) => <SelectItem key={value} value={value}>{t(`eval.period.${value}` as TranslationKey)}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      <div className="h-56">
+      {period !== "all" && (
+        <div className="mb-3 rounded-md border border-border bg-background p-3">
+          <p className="eyebrow">{t("eval.comparison")}</p>
+          {hasPrevious ? (
+            <div className="mt-2 grid grid-cols-3 gap-2 text-sm">
+              <div><p className="text-xs text-muted-foreground">{t("eval.currentPeriod")}</p><p className="font-display text-2xl font-bold text-primary tabular">{formatRating(currentAverage)}</p></div>
+              <div><p className="text-xs text-muted-foreground">{t("eval.previousPeriod")}</p><p className="font-display text-2xl font-bold tabular">{formatRating(previousAverage)}</p></div>
+              <div><p className="text-xs text-muted-foreground">Δ</p><p className="font-display text-2xl font-bold tabular">{currentAverage !== null && previousAverage !== null ? `${currentAverage - previousAverage >= 0 ? "+" : ""}${(currentAverage - previousAverage).toFixed(2)}` : "—"}</p></div>
+            </div>
+          ) : <p className="mt-2 text-xs text-muted-foreground">{t("eval.noPrevious")}</p>}
+        </div>
+      )}
+      <div className="h-64 sm:h-56">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={series}>
             <CartesianGrid stroke="var(--border)" vertical={false} />
@@ -135,10 +187,13 @@ export function EvolutionChart({ evaluations }: { evaluations: Evaluation[] }) {
             <YAxis domain={[0, 5]} ticks={[1, 2, 3, 4, 5]} stroke="var(--muted-foreground)" fontSize={11} width={24} />
             <Tooltip contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 6 }} />
             <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Line type="monotone" dataKey="overall" name="Overall" stroke="var(--primary)" strokeWidth={2.5} dot />
-            {CATEGORY_KEYS.map((c, i) => (
-              <Line key={c} type="monotone" dataKey={c} name={t(`cat.${c}` as TranslationKey)} stroke={colors[i]} strokeWidth={1} dot={false} connectNulls />
-            ))}
+            {metric === "all" ? (
+              <>
+                <Line type="monotone" dataKey="overall" name="Overall" stroke="var(--primary)" strokeWidth={2.5} dot connectNulls />
+                {CATEGORY_KEYS.map((category, index) => <Line key={category} type="monotone" dataKey={category} name={t(`cat.${category}` as TranslationKey)} stroke={colors[index]} strokeWidth={1} dot={false} connectNulls />)}
+              </>
+            ) : <Line type="monotone" dataKey={metric} name={metric === "overall" ? "Overall" : t(`cat.${metric}` as TranslationKey)} stroke="var(--primary)" strokeWidth={2.5} dot connectNulls />}
+            {period !== "all" && hasPrevious && <Line type="monotone" dataKey="previous" name={t("eval.previousPeriod")} stroke="var(--muted-foreground)" strokeWidth={1.5} strokeDasharray="5 4" dot={false} connectNulls />}
           </LineChart>
         </ResponsiveContainer>
       </div>

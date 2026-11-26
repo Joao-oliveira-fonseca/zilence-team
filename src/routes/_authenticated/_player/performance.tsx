@@ -8,7 +8,16 @@ import { memberQueryOptions } from "@/lib/member";
 import { useI18n } from "@/i18n";
 
 export const Route = createFileRoute("/_authenticated/_player/performance")({
-  head: () => ({ meta: [{ title: "My Performance — ZILENCE" }] }),
+  head: () => ({
+    meta: [
+      { title: "My Performance — ZILENCE" },
+      { name: "description", content: "Avaliações, Champion Pool, histórico e evolução do jogador ZILENCE." },
+      { property: "og:title", content: "My Performance — ZILENCE" },
+      { property: "og:description", content: "Desempenho individual e evolução competitiva na ZILENCE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: PerformancePage,
 });
 

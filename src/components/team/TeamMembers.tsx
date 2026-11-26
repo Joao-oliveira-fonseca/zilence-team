@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { Mail, Shield, ShieldMinus, ShieldPlus, UserRound } from "lucide-react";
+import { Loader2, Mail, Shield, ShieldMinus, ShieldPlus, UserRound, UserRoundPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState, PlayerAvatar, PositionBadge, Section, StatCard } from "@/components/common/Page";
 import { supabase } from "@/integrations/supabase/client";
 import { pendingAccountsQueryOptions, playersQueryOptions, profilesQueryOptions, userRolesQueryOptions } from "@/lib/queries";
@@ -21,6 +23,9 @@ export function TeamMembers() {
   const { data: roles } = useSuspenseQuery(userRolesQueryOptions);
   const { data: pending } = useSuspenseQuery(pendingAccountsQueryOptions);
   const [removing, setRemoving] = useState<PendingAccount | null>(null);
+  const [assigningPlayer, setAssigningPlayer] = useState<PendingAccount | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState("");
+  const unlinkedPlayers = players.filter((player) => player.user_id === null);
 
   const coaches = useMemo(
     () => roles.filter((role) => role.role === "coach").map((role) => profiles.find((profile) => profile.id === role.user_id)).filter((profile) => profile !== undefined),
@@ -41,6 +46,20 @@ export function TeamMembers() {
     },
     onSuccess: () => {
       toast.success(t("team.coachAdded"));
+      invalidateMembers();
+    },
+    onError: () => toast.error(t("common.error")),
+  });
+
+  const makePlayer = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc("link_player_account", { _player_id: selectedPlayer, _user_id: assigningPlayer!.id });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success(t("team.playerAdded"));
+      setAssigningPlayer(null);
+      setSelectedPlayer("");
       invalidateMembers();
     },
     onError: () => toast.error(t("common.error")),
@@ -100,9 +119,14 @@ export function TeamMembers() {
                     <p className="truncate text-sm font-medium">{account.display_name ?? account.email}</p>
                     <p className="truncate text-xs text-muted-foreground">{account.email}</p>
                   </div>
-                  <Button size="sm" variant="soft" disabled={promote.isPending} onClick={() => promote.mutate(account.id)}>
-                    <ShieldPlus />{t("team.makeCoach")}
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="soft" disabled={makePlayer.isPending} onClick={() => { setAssigningPlayer(account); setSelectedPlayer(""); }}>
+                      <UserRoundPlus />{t("team.makePlayer")}
+                    </Button>
+                    <Button size="sm" variant="outline" disabled={promote.isPending} onClick={() => promote.mutate(account.id)}>
+                      <ShieldPlus />{t("team.makeCoach")}
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -144,6 +168,31 @@ export function TeamMembers() {
           </div>
         </div>
       </Section>
+
+      <Dialog open={Boolean(assigningPlayer)} onOpenChange={(open) => { if (!open) { setAssigningPlayer(null); setSelectedPlayer(""); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("team.makePlayerTitle", { name: assigningPlayer?.display_name ?? assigningPlayer?.email ?? "" })}</DialogTitle>
+            <DialogDescription>{t("team.makePlayerBody")}</DialogDescription>
+          </DialogHeader>
+          {unlinkedPlayers.length === 0 ? (
+            <p className="rounded-md border border-border bg-surface p-3 text-sm text-muted-foreground">{t("team.noUnlinkedPlayers")}</p>
+          ) : (
+            <Select value={selectedPlayer} onValueChange={setSelectedPlayer}>
+              <SelectTrigger aria-label={t("team.selectPlayer")}><SelectValue placeholder={t("team.selectPlayer")} /></SelectTrigger>
+              <SelectContent>
+                {unlinkedPlayers.map((player) => <SelectItem key={player.id} value={player.id}>{player.nickname} · {player.main_position}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setAssigningPlayer(null)}>{t("common.cancel")}</Button>
+            <Button disabled={!selectedPlayer || makePlayer.isPending} onClick={() => makePlayer.mutate()}>
+              {makePlayer.isPending && <Loader2 className="animate-spin" />}{t("common.confirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={Boolean(removing)} onOpenChange={(open) => !open && setRemoving(null)}>
         <AlertDialogContent>
