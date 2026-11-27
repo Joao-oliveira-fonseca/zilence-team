@@ -1,10 +1,9 @@
-import logoAsset from "@/assets/zilence-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
 export function LogoMark({ className, src, alt = "ZILENCE" }: { className?: string; src?: string | null; alt?: string }) {
   return (
     <img
-      src={src || logoAsset.url}
+      src={src || "/assets/zilence-logo.png"}
       alt={alt}
       className={cn("aspect-square rounded-md object-cover", className)}
       width={40}
