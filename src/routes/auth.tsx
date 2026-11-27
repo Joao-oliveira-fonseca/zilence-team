@@ -3,7 +3,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { LovableMark } from "@lovable.dev/cloud-auth-js/react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
@@ -101,7 +100,7 @@ function AuthPage() {
     }
   }
 
-  async function social(provider: "google" | "lovable") {
+  async function social(provider: "google") {
     const result = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin + "/auth" });
     if (result.error) {
       toast.error(t("common.error"));
@@ -175,10 +174,6 @@ function AuthPage() {
                 <Button type="button" variant="outline" className="google-btn h-10 w-full" onClick={() => social("google")}>
                   <GoogleLogo />
                   {t("auth.google")}
-                </Button>
-                <Button type="button" variant="outline" className="h-10 w-full" onClick={() => social("lovable")}>
-                  <LovableMark />
-                  {t("auth.lovable")}
                 </Button>
               </div>
             </>
