@@ -1,5 +1,10 @@
 # ZILENCE Roadmap
 
+## Correção — Login Google no preview e na Vercel
+- [x] Usar o endereço hospedado de autenticação, mantendo o retorno no site de origem
+- [ ] Liberar `https://zilence-team-psi.vercel.app/**` em Users → Auth settings → Advanced → Redirect URLs (bloqueado: essa lista só pode ser editada pelo usuário na interface)
+- [x] Aguardar confirmação da sessão antes de abrir a área interna
+
 ## Etapa 1 — Foundation (concluída)
 - [x] Design system preto/laranja + logo + favicon
 - [x] Login (e-mail/senha, Google, Lovable), definir senha via convite, reset de senha

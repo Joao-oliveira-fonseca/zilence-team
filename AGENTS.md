@@ -31,6 +31,8 @@ use the editor.
 
 ## Project rules (ZILENCE)
 
+- Google OAuth uses `src/lib/google-auth.ts` with an absolute broker URL on the project's published Lovable host, returns to `/auth` on the caller's origin, and waits for a validated user with a late-session listener. Why: independent hosts do not serve `/~oauth`, and OAuth completion can arrive after the page mounts.
+
 - Roles live in `public.user_roles` (`coach` | `player`); RLS uses `is_coach()` / `my_player_id()` security-definer helpers. Why: UI hiding is not security; every table must enforce role and visibility in RLS.
 - The first account becomes coach via the `handle_new_user` trigger; players join through `invitePlayer` (server fn, service role used only after the caller's coach check). Why: no self-promotion path exists from the browser.
 - Shared content carries a `visibility_level` (`private` default, `player`, `team`); coach notes never get one. Why: sharing is managed centrally in Visibility Control.

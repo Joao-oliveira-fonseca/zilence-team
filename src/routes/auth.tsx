@@ -4,7 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { signInWithGoogle } from "@/lib/google-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,10 +47,23 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/home", replace: true });
+    let active = true;
+    async function enterAfterSignIn() {
+      const { data, error } = await supabase.auth.getUser();
+      if (active && !error && data.user) navigate({ to: "/home", replace: true });
+    }
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && (event === "INITIAL_SESSION" || event === "SIGNED_IN")) {
+        // Auth callbacks must finish before making another Auth request.
+        queueMicrotask(() => { void enterAfterSignIn(); });
+      }
     });
+    void enterAfterSignIn();
     supabase.rpc("has_any_coach").then(({ data }) => setCanBootstrap(data === false));
+    return () => {
+      active = false;
+      listener.subscription.unsubscribe();
+    };
   }, [navigate]);
 
   async function handleSubmit(e: FormEvent) {
@@ -100,14 +113,27 @@ function AuthPage() {
     }
   }
 
-  async function social(provider: "google") {
-    const result = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin + "/auth" });
-    if (result.error) {
+  async function social() {
+    setBusy(true);
+    try {
+      // Return to an existing public page; the auth listener handles late sessions.
+      const result = await signInWithGoogle();
+      if (result.error) {
+        toast.error(t("common.error"));
+        return;
+      }
+      if (result.redirected) return;
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data.user) {
+        toast.error(t("common.error"));
+        return;
+      }
+      navigate({ to: "/home", replace: true });
+    } catch {
       toast.error(t("common.error"));
-      return;
+    } finally {
+      setBusy(false);
     }
-    if (result.redirected) return;
-    navigate({ to: "/home", replace: true });
   }
 
   const title = mode === "signin" ? t("auth.signInTitle") : mode === "signup" ? t("auth.signUpTitle") : t("auth.forgotTitle");
@@ -171,7 +197,7 @@ function AuthPage() {
                 <div className="h-px flex-1 bg-border" />
               </div>
               <div className="space-y-2">
-                <Button type="button" variant="outline" className="google-btn h-10 w-full" onClick={() => social("google")}>
+                <Button type="button" variant="outline" className="google-btn h-10 w-full" disabled={busy} onClick={social}>
                   <GoogleLogo />
                   {t("auth.google")}
                 </Button>
